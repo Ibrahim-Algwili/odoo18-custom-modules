@@ -1,15 +1,15 @@
 <odoo>
 <!-- Level Three -->
 
-    <!-- Tree View -->
+    <!-- List View -->
 
     <record id="tag_view_tree" model="ir.ui.view">
         <field name="name">tag tree</field>
         <field name="model">tag</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name" />
-            </tree>
+            </list>
         </field>
     </record>
 

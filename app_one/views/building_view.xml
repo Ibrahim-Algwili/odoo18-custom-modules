@@ -1,19 +1,19 @@
 <odoo>
 <!-- Level Three -->
 
-    <!-- Tree View -->
+    <!-- List View -->
 
     <record id="building_view_tree" model="ir.ui.view">
         <field name="name">building tree</field>
         <field name="model">building</field>
         <field name="arch" type="xml">
             <!-- (Permesions From Presentation Tier default is (0) for multi_edit , the others is (1) -->
-            <tree class="header_custom" >
+            <list class="header_custom" >
                 <field name="no" />
                 <field name="active" />
                 <field name="code" />
                 <field name="description" />
-            </tree>
+            </list>
         </field>
     </record>
 

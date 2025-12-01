@@ -8,5 +8,6 @@ class ProductTemplate(models.Model) :
 
     commision_rate = fields.Float(
         string="Commission %",
+        default=5,
         help="Commission percentage for this product. Overrides reseller default rate."
     )

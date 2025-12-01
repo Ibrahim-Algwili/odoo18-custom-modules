@@ -1,14 +1,14 @@
 <odoo>
 <!-- Level Three -->
 
-    <!-- Tree View -->
+    <!-- List View -->
 
     <record id="property_view_tree" model="ir.ui.view">
         <field name="name">property tree</field>
         <field name="model">property</field>
         <field name="arch" type="xml">
             <!-- (Permesions From Presentation Tier default is (0) for multi_edit , the others is (1) -->
-            <tree class="header_style" decoration-danger="(is_late)" multi_edit="1" edit="1" create="1" delete="1" >
+            <list class="header_style" decoration-danger="(is_late)" multi_edit="1" edit="1" create="1" delete="1" >
                 <field name="name" />
                 <field name="postcode" />
                 <field name="is_late" invisible="1" />
@@ -23,7 +23,7 @@
                 <field name="bedrooms" optional="1"/>
                 <field name="garage" optional="1"/>
                 <field name="garden_orientation" optional="1"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -115,16 +115,16 @@
                     <notebook>
                         <page string="bedrooms">
                             <field name="line_ids" readonly="state == 'closed'" >
-                                <tree editable="button">
+                                <list editable="button">
                                     <field name="description" />
                                     <field name="area" />
-                                </tree>
+                                </list>
                             </field>
                         </page>
 
                         <page string="Offers" groups="app_one.property_managers_group">
                             <field name="offer_ids" readonly="state == 'closed'" >
-                                <tree editable="button">
+                                <list editable="button">
                                     <field name="price" />
                                     <field name="partner_id" />
                                     <!-- Offer -->
@@ -133,7 +133,7 @@
                                     <button name="action_refuse" type="object" string="Refuse" icon="fa-check"
                                          invisible="status == 'refused'" />
                                     <field name="status" />
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>

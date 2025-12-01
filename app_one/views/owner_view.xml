@@ -1,17 +1,17 @@
 <odoo>
 <!-- Level Three -->
 
-    <!-- Tree View -->
+    <!-- List View -->
 
     <record id="owner_view_tree" model="ir.ui.view">
         <field name="name">owner tree</field>
         <field name="model">owner</field>
         <field name="arch" type="xml">
-            <tree multi_edit="1" >
+            <list multi_edit="1" >
                 <field name="name" />
                 <field name="phone" />
                 <field name="address" />
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -47,7 +47,7 @@
     <record id="owner_action" model="ir.actions.act_window"> <!-- act_window (will open view when you click) -->
         <field name="name">owner</field>
         <field name="res_model">owner</field> <!-- model name -->
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem

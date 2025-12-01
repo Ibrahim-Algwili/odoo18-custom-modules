@@ -1,19 +1,19 @@
 <odoo>
 <!-- Level Three -->
 
-    <!-- Tree View -->
+    <!-- List View -->
 
     <record id="property_history_tree" model="ir.ui.view">
         <field name="name">property histrory tree</field>
         <field name="model">property.history</field>
         <field name="arch" type="xml">
             <!-- (Permesions From Presentation Tier default is (0) for multi_edit , the others is (1) -->
-            <tree create="0" edit="0" delete="1">
+            <list create="0" edit="0" delete="1">
                 <field name="user_id" />
                 <field name="property_id" />
                 <field name="old_state" />
                 <field name="new_state" />
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -40,10 +40,10 @@
                     <notebook>
                         <page string="bedrooms">
                             <field name="line_ids" readonly="1" >
-                                <tree>
+                                <list>
                                     <field name="description" />
                                     <field name="area" />
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>

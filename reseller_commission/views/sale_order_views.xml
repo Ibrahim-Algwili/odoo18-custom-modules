@@ -13,7 +13,7 @@
             </xpath>
 
             <!-- Insert commision_rate the order_line tree -->
-            <xpath expr="//field[@name='order_line']/tree" position="inside">
+            <xpath expr="//field[@name='order_line']/list" position="inside">
                 <field name="comision_amount"/>
             </xpath>
         </field>

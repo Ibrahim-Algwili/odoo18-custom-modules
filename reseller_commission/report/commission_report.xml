@@ -62,7 +62,7 @@
                             </thead>
                             <tbody>
                                 <t t-foreach="o.settlement_line_ids" t-as="line">
-                                    <t t-if="line.is_refunded == False">
+                                    <t t-if="line.is_refunded == True">
                                         <tr>
                                             <td>
                                                 <strong>

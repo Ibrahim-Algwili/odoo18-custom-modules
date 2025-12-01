@@ -5,6 +5,7 @@ from odoo.exceptions import UserError
 class AccountMoveReversal(models.TransientModel):
     _inherit = 'account.move.reversal'
 
+
     def reverse_moves(self, is_modify=False, **kwargs):
         res = super().reverse_moves()
 
@@ -13,6 +14,7 @@ class AccountMoveReversal(models.TransientModel):
             return res
 
         refunds = self.env['account.move'].browse(refund_id)
+
 
         for refund in refunds:
 
@@ -23,6 +25,8 @@ class AccountMoveReversal(models.TransientModel):
             original = refund.reversed_entry_id
             if not original:
                 continue
+
+            # refund.is_refunded = True # to mark the refund as processed for commission reclaim so it won't appear again in incoice line
 
             # نبحث عن كل خطوط العمولة المرتبطة بهذه الفاتورة
             settlement_lines = self.env['commission.settlement.line'].search([
@@ -57,14 +61,15 @@ class AccountMoveReversal(models.TransientModel):
             #     raise UserError("Please configure a Commission Expense Account.")
 
 
-            # إنشاء Vendor Bill
+            # إنشاء Vendor Bill Refund
             bill_vals = {
                 'move_type': 'in_refund',  # Vendor Credit Note (Correct)
                 'partner_id': settlement.reseller_id.id,
                 'invoice_origin': original.name,
                 'invoice_date': fields.Date.context_today(self),
                 'invoice_line_ids': [(0, 0, {
-                    'name': f'Reclaim commission for refund of {original.name}',
+                    'name': f'Reclaim commission for refund of Commission : {settlement.ref}'
+                            f' Invoices {original.name} ',
                     'quantity': 1,
                     'price_unit': total_reclaim,
                     # 'account_id': expense_account.id,
@@ -73,6 +78,15 @@ class AccountMoveReversal(models.TransientModel):
 
             bill = self.env['account.move'].create(bill_vals)
             bill.action_post()
+
+
+            settlement_lines.is_refunded = True
+            # if settlement_lines.is_refunded :
+            #     refunds.is_refunded = True
+
+            # Chatter
+            settlement.message_post(body=f"Vendor Refund {bill.name} created for amount {settlement.total_commission}")
+
 
             # تحديث التسوية
             settlement.reclaim_bill_id = bill.id

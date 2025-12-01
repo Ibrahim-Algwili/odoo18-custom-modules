@@ -1,10 +1,10 @@
 {
-    'name' : 'Real State',
-    'author' : 'Ibrahim Ali',
-    'category' : '' ,
-    'version' : '17.0.0.1.0',
-    'depends' : ['base'  , 'sale'  , 'account' , 'mail' , 'contacts'],
-    'data' : [
+    'name': 'Real State',
+    'author': 'Ibrahim Ali',
+    'license': 'LGPL-3',
+    'version' : '18.0.0.1.0',
+    'depends': ['base', 'sale', 'account', 'mail', 'contacts'],
+    'data': [
         'security/category.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
@@ -22,12 +22,11 @@
         'views/property_offer_view.xml',
         'wizard/change_state_wizard.xml',
         'reports/property_report.xml',
-    ] ,
-    'assets' : {
-        'web.assets_backend' : ['app_one/static/src/css/property.css'],
-        'web.report_assets_common' : ['app_one/static/src/css/font.css'],
-    } ,
-    'application' : True,
-    'installable': True,
-
+    ],
+    'assets': {
+        'web.assets_backend': ['app_one/static/src/css/property.css'],
+        'web.report_assets_common': ['app_one/static/src/css/font.css'],
+    },
+    'application': True,
+    'installable': True
 }

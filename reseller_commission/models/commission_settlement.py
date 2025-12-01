@@ -10,7 +10,12 @@ from odoo.exceptions import ValidationError
 class CommissionSettlement(models.Model):
     _name = 'commission.settlement'
     _description = 'Commission Settlement'
+    _rec_name = 'ref'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
+    # -----------------------------
+    # Fields
+    # -----------------------------
     active = fields.Boolean(default=True)
     ref = fields.Char(string="Ref" , default='New')
 
@@ -48,37 +53,71 @@ class CommissionSettlement(models.Model):
         readonly=True
     )
 
+    bill_id = fields.Many2one('account.move', string="Vendor Bill")
+
     state = fields.Selection([
         ('draft', 'Draft'),
         ('accepted', 'Accepted'),
         ('reclaimed', 'Reclaimed'),
-    ], default='draft')
+    ], default='draft' , tracking=True)
 
     invoice_ids_used = fields.Many2many(
         'account.move',
-        compute = '_compute_invoices_used'
+        compute = '_compute_invoice_ids_used',
+        store=False
     )
 
+    # -----------------------------
+    # Overrides
+    # -----------------------------
     @api.model
     def create(self, vals_list):
+        ''' Override create to set sequence reference if new '''
         res = super().create(vals_list)
         if res.ref == 'New':
             res.ref = self.env['ir.sequence'].next_by_code('commission.settlement.sequence') or 'New'
-
         return res
 
+    def unlink(self):
+        ''' Prevent deletion if state is not draft '''
+        for rec in self:
+            if rec.state not in 'draft' :
+                raise ValidationError("You Can't Delete in Accepted State")
+        super().unlink()
+
+    # -----------------------------
+    # Compute Methods
+    # -----------------------------
     @api.depends('settlement_line_ids.invoice_commission')
     def _compute_total_commission(self):
         ''' Computing The Total Commission for the Re-seller '''
         for rec in self:
             rec.total_commission = sum(rec.settlement_line_ids.mapped('invoice_commission'))
 
+    @api.depends('settlement_line_ids', 'settlement_line_ids.invoice_id')
+    def _compute_invoice_ids_used(self):
+        ''' Compute all invoices used in this settlement (to avoid duplicates) '''
+        for rec in self:
+            rec.invoice_ids_used = rec.settlement_line_ids.mapped('invoice_id')
+            _logger.warning('ids used is : %s', rec.invoice_ids_used.ids)
 
+    # -----------------------------
+    # Onchange Methods
+    # -----------------------------
+    @api.onchange('reseller_id')
+    def _check_resller(self):
+        ''' Clear all commission lines if reseller is changed '''
+        if self.settlement_line_ids:
+            self.settlement_line_ids = [(5, 0, 0)] # Clear existing lines
+
+    # -----------------------------
+    # Actions
+    # -----------------------------
     def action_accepted(self):
         '''
-        Change the state To Draft ,
-        Assign Move in account.move model for the Commission ,
-        Validation if There is No Invoice Lines
+        Change the state To Accepted,
+        Create Vendor Bill for the commission,
+        Raise error if no invoice lines
         '''
         for rec in self:
             if rec.settlement_line_ids:
@@ -90,44 +129,62 @@ class CommissionSettlement(models.Model):
                     'currency_id' : rec.currency_id.id ,
                     'invoice_line_ids': [
                         (0, 0, {
-                            'name': 'Reseller Commission for invoices: ...',
+                            'name': f"Reseller Commission for invoices: {[inv.name for inv in rec.settlement_line_ids.mapped('invoice_id')] }",
                             'quantity': 1,
                             'price_unit': rec.total_commission,
                         })
                     ]
                 }
 
+                # Create and post vendor bill
                 bill = rec.env['account.move'].create(bill_vals)
-                bill.action_post()  # confirms the vendor bill
+                bill.action_post()
+                rec.bill_id = bill.id
+
+                # Post message in chatter
+                rec.message_post(body=f"Commission vendor bill {bill.name} created for amount {rec.total_commission}")
 
             else:
                 raise ValidationError("You Can't Put the State on Accepted \n You Have no Invoice Lines")
 
-            # Forbid the Accepted Invoices from Invoice lines
+            # Mark linked invoices as commission accepted
             invoices = rec.mapped('settlement_line_ids.invoice_id')
             invoices.write({'is_commission_accepted' : True})
 
+    def action_pay_commission(self):
+        '''
+        Open Vendor Bill form view to pay the commission
+        '''
+        self.ensure_one()
+        if not self.bill_id:
+            raise ValidationError("No vendor bill linked.")
+
+        return {
+            'name' : 'Commission',
+            'type' : 'ir.actions.act_window',
+            'res_model' : 'account.move',
+            'res_id' : self.bill_id.id , # record id
+            'view_mode' : 'form',
+            'view_id' : self.env.ref('account.view_move_form').id ,
+            'target': 'current',
+        }
+
+    def action_pay_refund(self):
+        '''
+        Open Refund Bill form view to reclaim commission from reseller
+        '''
+        self.ensure_one()
+        return {
+            'name': 'Commission',
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'res_id': self.reclaim_bill_id.id,  # record id
+            'view_mode': 'form',
+            'view_id': self.env.ref('account.view_move_form').id,
+            'target': 'current',
+        }
 
     def action_draft(self):
         ''' Change the state To Draft '''
         for rec in self:
             rec.state = 'draft'
-            # Debugging
-            # import pdb
-            # pdb.set_trace()
-
-    def unlink(self):
-        ''' Validation To Forbid Deletion While the state is Draft  '''
-        for rec in self:
-            if rec.state not in 'draft' :
-                raise ValidationError("You Can't Delete in Accepted State")
-        super().unlink()
-
-
-    @api.depends('settlement_line_ids.invoice_id')
-    def _compute_invoices_used(self):
-        ''' To Forbid Duplication of Invoices '''
-        for rec in self:
-            rec.invoice_ids_used = rec.settlement_line_ids.mapped('invoice_id')
-            _logger.warning('ids used is : ' , rec.invoice_ids_used.ids)
-

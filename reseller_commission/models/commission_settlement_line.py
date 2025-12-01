@@ -1,4 +1,6 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
+
 
 class CommissionSettlementLine(models.Model):
     _name = "commission.settlement.line"
@@ -46,22 +48,78 @@ class CommissionSettlementLine(models.Model):
         store=True
     )
 
+    # ---------------------
+    # ---- Constraints ----
+    # ---------------------
+
+    # SQL constraint to prevent the same invoice from being added twice to the same settlement
+    _sql_constraints = [
+        (
+            'unique_invoice_per_settlement',  # constraint name
+            'unique(settlement_id, invoice_id)',  # uniqueness condition
+            'Cannot add the same invoice twice to the same commission settlement!'  # error message
+        ),
+        (
+            'unique_invoices',  # constraint name
+            'unique(invoice_id)',  # uniqueness condition
+            'This invoice is already added to another settlement!'  # error message
+        )
+    ]
+
+    @api.constrains('invoice_id')
+    def _check_invoice_not_duplicate(self):
+        '''
+        Constraint method to ensure that the same invoice is not added multiple times
+        to the same commission settlement.
+
+        Steps:
+        1. For each record being created or updated, check for other records in the
+           same settlement with the same invoice.
+        2. If a duplicate is found, raise a ValidationError.
+
+        This works even if users try to bypass the SQL constraint (e.g., via API).
+        '''
+        for rec in self:
+            duplicates = self.search([
+                ('id', '!=', rec.id),  # exclude the current record
+                ('settlement_id', '=', rec.settlement_id.id),  # same commission settlement
+                ('invoice_id', '=', rec.invoice_id.id),  # same invoice
+            ], limit=1)
+
+            if duplicates:
+                raise ValidationError(
+                    "This invoice is already added to this settlement!"
+                )
+
+    # -----------------------------
     # ------- Functions -----------
+    # -----------------------------
 
     @api.depends(
         'invoice_id',
-        'invoice_id.reversal_move_id',
-        'invoice_id.reversal_move_id.state',
-        'invoice_id.reversal_move_id.move_type'
+        'invoice_id.reversed_entry_id',
+        'invoice_id.reversed_entry_id.state',
+        'invoice_id.reversed_entry_id.move_type'
     )
     def _compute_is_refunded(self):
+        '''
+        Compute whether the invoice has been refunded.
+        True if the invoice has a linked reversed entry that is posted and is an out_refund.
+        '''
         for rec in self:
-            rec.is_refunded = bool(rec.invoice_id.reversal_move_id)
-
+            rec.is_refunded = bool(
+                rec.invoice_id.reversed_entry_id and
+                rec.invoice_id.reversed_entry_id.state == 'posted' and
+                rec.invoice_id.reversed_entry_id.move_type == 'out_refund'
+            )
 
     # The compute method for calculating amounts:
     @api.depends('invoice_id')
     def _compute_invoice_amounts(self):
+        '''
+        Compute the total invoice amount and the commission for this invoice line.
+        Commission is calculated based on product commission rates.
+        '''
         for line in self:
             # Check if invoice is linked
             if not line.invoice_id:
