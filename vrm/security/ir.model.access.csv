@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+vrm_vendor_lead_user,vrm_vendor_lead_user,model_vrm_vendor_lead,,1,1,1,1
+vrm_vendor_stage_user,vrm_vendor_stage_user,model_vrm_vendor_stage,,1,1,1,1
+vrm_vendor_tag_user,vrm_vendor_tag_user,model_vrm_vendor_tag,,1,1,1,1
+vrm_purchase_team_user,vrm_purchase_team_user,model_purchase_team,,1,1,1,1
+vrm_wizard_suspend_user,vrm_wizard_suspend_user,model_suspend_reason_wizard,,1,1,1,1
+

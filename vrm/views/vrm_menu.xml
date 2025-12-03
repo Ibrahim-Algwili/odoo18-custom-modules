@@ -1,0 +1,76 @@
+<odoo>
+
+    <!-- Root Menu for VRM Module -->
+    <menuitem
+            id="menu_vrm_root"
+            name="VRM"
+            sequence="10"
+            web_icon="/vrm/static/description/icon.png"
+    />
+
+    <!-- Purchase Menu under VRM -->
+    <menuitem
+            id="menu_vrm_purchase"
+            name="Purchase"
+            parent="menu_vrm_root"
+            sequence="11"
+    />
+
+    <menuitem
+            id="menu_vrm_pipeline"
+            name="Pipeline"
+            parent="menu_vrm_purchase"
+            action="action_vrm_pipeline"
+            sequence="10"
+    />
+
+   <menuitem
+            id="menu_vrm_vendors"
+            name="Vendors"
+            parent="menu_vrm_purchase"
+            action="action_vrm_vendors_list"
+            sequence="12"
+    />
+
+    <menuitem
+            id="menu_vrm_rfqs"
+            name="My RFQ's"
+            parent="menu_vrm_purchase"
+            action="action_rfqs_list"
+            sequence="11"
+    />
+
+
+
+    <!-- Configuration Menu under VRM -->
+     <menuitem
+            id="menu_configuration"
+            name="Configuration"
+            parent="menu_vrm_root"
+            sequence="12"
+    />
+
+     <menuitem
+            id="menu_vrm_stages"
+            name="Stages"
+            parent="menu_configuration"
+            action="action_vrm_stages"
+    />
+
+    <menuitem
+            id="menu_vrm_tags"
+            name="Tags"
+            parent="menu_configuration"
+            action="action_vrm_tags"
+    />
+
+    <menuitem
+            id="menu_vrm_teams"
+            name="Purchase Teams"
+            parent="menu_configuration"
+            action="action_purchase_team_vrm"
+    />
+
+
+
+</odoo>

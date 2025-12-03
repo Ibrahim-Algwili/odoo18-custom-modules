@@ -1,0 +1,15 @@
+<odoo>
+    <data>
+
+        <!-- Server Actions -->
+        <record id="server_action_suspend_vendor_lead" model="ir.actions.server">
+            <field name="name">Suspend Vendor Lead</field>
+            <field name="model_id" ref="model_vrm_vendor_lead"/>
+            <field name="state">code</field>
+            <field name="code">
+                records.action_suspend_lead_direct()
+            </field>
+        </record>
+
+    </data>
+</odoo>

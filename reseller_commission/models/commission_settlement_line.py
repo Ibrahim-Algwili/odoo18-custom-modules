@@ -48,6 +48,31 @@ class CommissionSettlementLine(models.Model):
         store=True
     )
 
+    # new: how much commission has been refunded for this invoice line
+    commission_refunded = fields.Monetary(
+        string="Refunded Commission",
+        currency_field='currency_id',
+        default=0.0,
+        help="Cumulative commission amount reclaimed for this invoice (due to refunds)."
+    )
+
+    # new: net commission after refunds (computed)
+    commission_net = fields.Monetary(
+        string="Net Commission",
+        currency_field='currency_id',
+        compute='_compute_commission_net',
+        store=True,
+        help="Commission remaining after subtracting refunded amounts."
+    )
+
+    @api.depends('invoice_commission', 'commission_refunded')
+    def _compute_commission_net(self):
+        '''
+        Compute net commission for the line = invoice_commission - commission_refunded.
+        '''
+        for rec in self:
+            rec.commission_net = max((rec.invoice_commission or 0.0) - (rec.commission_refunded or 0.0), 0.0)
+
     # ---------------------
     # ---- Constraints ----
     # ---------------------

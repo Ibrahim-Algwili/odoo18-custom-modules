@@ -67,6 +67,30 @@ class CommissionSettlement(models.Model):
         store=False
     )
 
+    total_commission_refunded = fields.Monetary(
+        string="Total Commission Refunded",
+        compute='_compute_totals_refunded',
+        store=True,
+        currency_field='currency_id'
+    )
+
+    total_commission_net = fields.Monetary(
+        string="Net Total Commission",
+        compute='_compute_totals_refunded',
+        store=True,
+        currency_field='currency_id'
+    )
+
+    # @api.depends('settlement_line_ids.commission_refunded', 'total_commission')
+    # def _compute_totals_refunded(self):
+    #     '''
+    #     Compute total refunded commission across settlement lines and net total.
+    #     '''
+    #     for rec in self:
+    #         refunded = sum(rec.settlement_line_ids.mapped('commission_refunded') or [])
+    #         rec.total_commission_refunded = refunded
+    #         rec.total_commission_net = max((rec.total_commission or 0.0) - refunded, 0.0)
+
     # -----------------------------
     # Overrides
     # -----------------------------
@@ -90,9 +114,32 @@ class CommissionSettlement(models.Model):
     # -----------------------------
     @api.depends('settlement_line_ids.invoice_commission')
     def _compute_total_commission(self):
-        ''' Computing The Total Commission for the Re-seller '''
+        '''
+        Compute the total original commission before any refunds.
+        '''
         for rec in self:
-            rec.total_commission = sum(rec.settlement_line_ids.mapped('invoice_commission'))
+            rec.total_commission = sum(
+                rec.settlement_line_ids.mapped('invoice_commission') or []
+            )
+
+    @api.depends('settlement_line_ids.commission_refunded', 'total_commission')
+    def _compute_totals_refunded(self):
+        '''
+        Compute:
+        1) total_commission_refunded → sum of refunded commission
+        2) total_commission_net → original commission minus refunded
+        '''
+        for rec in self:
+            refunded = sum(
+                rec.settlement_line_ids.mapped('commission_refunded') or []
+            )
+            rec.total_commission_refunded = refunded
+
+            # Net = Original - Refunded
+            rec.total_commission_net = max(
+                (rec.total_commission or 0.0) - refunded,
+                0.0
+            )
 
     @api.depends('settlement_line_ids', 'settlement_line_ids.invoice_id')
     def _compute_invoice_ids_used(self):

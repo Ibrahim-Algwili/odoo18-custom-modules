@@ -1,0 +1,33 @@
+<odoo>
+
+    <record id="view_partner_form_vrm" model="ir.ui.view">
+        <field name="name">res.partner.form.vrm</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="is_vendor"/>
+            </xpath>
+
+            <notebook position="inside">
+                <page string="VRM Information">
+                    <group>
+                        <field name="vrm_tier"/>
+                        <field name="vrm_risk"/>
+                        <field name="vrm_approval_date"/>
+                        <field name="vrm_stage_id"/>
+                    </group>
+                    <group string="Notes">
+                        <field name="vrm_notes"/>
+                    </group>
+
+                    <group>
+                        <field name="purchase_team_id" />
+                    </group>
+
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

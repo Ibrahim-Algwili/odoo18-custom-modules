@@ -1,0 +1,26 @@
+<odoo>
+    <data>
+        <!-- Action to open the Vendors List View -->
+        <record id="action_vrm_vendors_list" model="ir.actions.act_window">
+            <field name="name">Vendors</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,form</field>
+            <field name="domain">[
+                '|',
+                ('is_vendor', '=', True),
+                ('category_id', 'ilike', 'Vendor')
+                ]
+            </field>
+        </record>
+
+        <!-- Window Action for My Quotations -->
+        <record id="action_rfqs_list" model="ir.actions.act_window">
+            <field name="name">My RFQ's</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('state', '=', 'draft'), ('user_id', '=', uid)]</field>
+        </record>
+
+    </data>
+</odoo>
+

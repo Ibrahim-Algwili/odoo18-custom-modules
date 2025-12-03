@@ -49,7 +49,7 @@
                     <div name="button_box" class="oe_button_box">
                         <button name="action_pay_commission" type="object"
                                 string="Pay Commission" icon="fa-money" invisible="state != 'accepted'"/>
-                         <button name="action_pay_refund" type="object"
+                        <button name="action_pay_refund" type="object"
                                 string="Get Refund" icon="fa-money" invisible="state != 'reclaimed'"/>
                     </div>
 
@@ -103,6 +103,8 @@
 
                                             ]"/>
                                     <field name="invoice_total" readonly="1" widget="monetary"/>
+<!--                                    <field name="commission_refunded" readonly="1" widget="monetary"/>-->
+                                    <field name="commission_net" readonly="1" widget="monetary"/>
                                     <field name="invoice_commission" readonly="1" widget="monetary"/>
                                     <field name="currency_id" optional="1"/>
                                     <!--                                    <field name="is_refunded" optional="1" decoration-danger="is_refunded"/>-->
@@ -110,16 +112,36 @@
                             </field>
 
                             <!-- TOTAL COMMISSION SECTION -->
-                            <group>
+                            <div class="commission_totals">
                                 <group>
-                                    <label for="total_commission"/>
-                                    <div class="oe_left oe_bold">
-                                        <strong>
-                                            <field name="total_commission" widget="monetary"/>
-                                        </strong>
-                                    </div>
+                                    <group>
+                                        <label for="total_commission"/>
+                                        <div class="oe_left oe_bold">
+                                            <strong>
+                                                <field name="total_commission" widget="monetary"
+                                                       class="commission_total_original"/>
+                                            </strong>
+                                        </div>
+
+<!--                                        <label for="total_commission_refunded"/>-->
+<!--                                        <div class="oe_left oe_bold">-->
+<!--                                            <strong>-->
+<!--                                                <field name="total_commission_refunded" widget="monetary"-->
+<!--                                                       class="commission_total_refunded"/>-->
+<!--                                            </strong>-->
+<!--                                        </div>-->
+
+                                        <label for="total_commission_net"/>
+                                        <div class="oe_left oe_bold">
+                                            <strong>
+                                                <field name="total_commission_net" widget="monetary"
+                                                       class="commission_total_net"/>
+                                            </strong>
+                                        </div>
+                                    </group>
                                 </group>
-                            </group>
+                            </div>
+
                         </page>
                     </notebook>
                 </sheet>
