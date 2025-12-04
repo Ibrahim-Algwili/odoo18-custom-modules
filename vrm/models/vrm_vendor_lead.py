@@ -18,7 +18,10 @@ class VrmVendorLead(models.Model):
     expected_annual_spend = fields.Monetary(string="Expected Annual Spend")
     probability = fields.Float(string="Probability (%)", default=0.0, tracking=True)
     currency_id = fields.Many2one('res.currency', string='Currency')
-    responsible_id = fields.Many2one('res.users', string="Responsible")
+
+    responsible_id = fields.Many2one('res.users', string="Responsible", default=lambda self: self.env.user.id)
+    purchase_team_id = fields.Many2one('purchase.team', string="Purchase Team")
+
     vrm_tier = fields.Selection([('a', 'Tier A'), ('b', 'Tier B'), ('c', 'Tier C')], string="Tier")
     vrm_risk = fields.Selection([('low', 'Low'), ('medium', 'Medium'), ('high', 'High')], string="Risk Level")
     note = fields.Html(
@@ -41,12 +44,12 @@ class VrmVendorLead(models.Model):
     vendor_email = fields.Char('Email')
     vendor_website = fields.Char('Website')
     vendor_country_id = fields.Many2one("res.country", string="Country")
-    vendor_purchase_team = fields.Char('Purchase Team')
 
+    # vendor_purchase_team = fields.Char('Purchase Team')
 
     @api.onchange('partner_id')
     def _onchange_partner_id(self):
-        if self.partner_id :
+        if self.partner_id:
             partner = self.partner_id
 
             self.vendor_street = partner.street
@@ -55,10 +58,72 @@ class VrmVendorLead(models.Model):
             self.vendor_email = partner.email
             self.vendor_website = partner.website
             self.vendor_country_id = partner.country_id.id
-            self.vendor_purchase_team = partner.purchase_team_id.name
+            # self.vendor_purchase_team = partner.purchase_team_id.name
+
+    # -----------------------------
+    # --------- Activity ----------
+    # -----------------------------
+
+    activity_state = fields.Selection(
+        [
+            ('overdue', 'Overdue'),
+            ('today', 'Today'),
+            ('planned', 'Planned'),
+        ],
+        string='Activity State',
+        compute='_compute_activity_state',
+        store=True,  # التخزين يحسن الأداء في العروض والقواعد
+        search='_search_activity_state'  # يسمح بالبحث المباشر في قاعدة البيانات
+    )
+
+    # 💡 حقل العلاقة الذي يربط السجل بالأنشطة (ضروري للحساب)
+    activity_ids = fields.One2many(
+        'mail.activity', 'res_id', string='Activities',
+        domain=[('res_model', '=', 'vrm.vendor.lead')]
+    )
+
+    @api.depends('activity_ids.state', 'activity_ids.date_deadline')
+    def _compute_activity_state(self):
+        """
+        يحسب حالة الأنشطة بناءً على مواعيدها النهائية.
+        """
+        for lead in self:
+            # افتراضياً، إذا لم يكن هناك أنشطة، يعتبر "مخطط"
+            lead.activity_state = 'planned'
+
+            # العثور على الأنشطة غير المنجزة للسجل الحالي
+            pending_activities = lead.activity_ids.filtered(
+                lambda a: a.state == 'today' or a.state == 'overdue' or a.state == 'planned')
+
+            if not pending_activities:
+                # لا يوجد أنشطة نشطة
+                lead.activity_state = 'planned'
+                continue
+
+            # التحقق من الأنشطة المتأخرة
+            overdue_activities = pending_activities.filtered(lambda a: a.state == 'overdue')
+            if overdue_activities:
+                lead.activity_state = 'overdue'
+                continue
+
+            # التحقق من الأنشطة المجدولة لليوم
+            today_activities = pending_activities.filtered(lambda a: a.state == 'today')
+            if today_activities:
+                lead.activity_state = 'today'
+                continue
+
+            # إذا كان هناك أنشطة ولكنها ليست متأخرة ولا لليوم، تعتبر مخططة للمستقبل
+            lead.activity_state = 'planned'
+
+    # (يمكن ترك دالة البحث فارغة أو تطبيق منطق بحث مخصص)
+    def _search_activity_state(self, operator, value):
+        # Odoo عادة ما يستخدم الحقل activity_ids والحقول المساعدة
+        # مثل activity_exception_decoration مباشرة للبحث في قاعدة البيانات
+        return [('activity_state', operator, value)]
 
 
 
+    # -----------------------------------------------------------------------------
 
     @api.onchange('vrm_stage_id')
     def _onchange_vrm_stage_id(self):
@@ -76,18 +141,16 @@ class VrmVendorLead(models.Model):
         else:
             self.probability = 0.0
 
-
     def action_won_lead(self):
         """ Mark the Lead as Won """
 
-        won_stage = self.env['vrm.vendor.stage'].search([('name' , '=' , 'Won')] , limit=1)
+        won_stage = self.env['vrm.vendor.stage'].search([('name', '=', 'Won')], limit=1)
 
         if not won_stage:
             raise UserError('This Stage Not Found!!')
 
         for lead in self:
             lead.vrm_stage_id = won_stage.id
-
 
         lead.message_post(
             body=f"Lead Converted to Won by {self.env.user.name}",
@@ -99,9 +162,8 @@ class VrmVendorLead(models.Model):
 
         if won_stage:
             self.is_won = True
-        else : self.is_won = False
-
-
+        else:
+            self.is_won = False
 
         return True
 
@@ -133,19 +195,17 @@ class VrmVendorLead(models.Model):
         # Returning True signals Odoo that the server action was executed successfully.
         return True
 
-
     def action_rfq(self):
         return {
-            'name' : 'New RFQ',
-            'type' : 'ir.actions.act_window',
-            'view_mode' : 'form',
-            'res_model' : 'purchase.order',
-            'context' : {
+            'name': 'New RFQ',
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'purchase.order',
+            'context': {
                 'default_partner_id': self.partner_id.id,
-            } ,
-            'target' : 'current'
+            },
+            'target': 'current'
         }
-
 
     def is_state_won(self):
         won_stage = self.env['vrm.vendor.stage'].search([('name', '=', 'Won')], limit=1)
@@ -153,4 +213,5 @@ class VrmVendorLead(models.Model):
         for rec in self:
             if won_stage:
                 rec.is_won = True
-            else : rec.is_won = False
+            else:
+                rec.is_won = False

@@ -12,6 +12,16 @@
                     create="true"
                     quick_create="true"
             >
+                <!-- Progress Bar on top of kanban -->
+                <div class="oe_kanban_bottom_right">
+                    <div class="o_kanban_record_progress">
+                        <field name="activity_state" invisible="1"/>
+
+                        <progressbar field="activity_state"
+                                     colors='{"planned": "success", "today": "warning", "overdue": "danger"}'
+                                     sum_field="expected_annual_spend"/>
+                    </div>
+                </div>
 
                 <!-- Necessory to show columns -->
                 <group>
@@ -44,6 +54,11 @@
                             </div>
 
                             <div>
+                                Expected Spend:
+                                <field name="expected_annual_spend"/> <span><field name="currency_id"/></span>
+                            </div>
+
+                            <div>
                                 Tier:
                                 <field name="vrm_tier"/>
                             </div>
@@ -69,6 +84,11 @@
 
                             <div>
                                 <field name="vrm_tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            </div>
+
+                            <!-- Activity -->
+                            <div class="oe_kanban_bottom_right">
+                                <field name="activity_ids" widget="list_activity"/>
                             </div>
 
                         </div>
@@ -136,7 +156,8 @@
 
                         <group>
                             <field name="partner_id" widget="many2one_avatar"/>
-                            <field name="responsible_id" widget="many2one_avatar"/>
+                            <field name="purchase_team_id" widget="many2one_avatar"/>
+                            <field name="responsible_id" widget="many2one_avatar" />
                         </group>
 
                         <group>
@@ -168,10 +189,10 @@
                                 <field name="vendor_street"/>
                                 <field name="vendor_phone"/>
                                 <field name="vendor_email"/>
-                                 <field name="vendor_country_id"/>
+                                <field name="vendor_country_id"/>
                                 <field name="vendor_vat"/>
                                 <field name="vendor_website"/>
-                                <field name="vendor_purchase_team" readonly="1"/>
+                                <!--                                <field name="vendor_purchase_team" readonly="1"/>-->
                             </group>
                         </page>
 

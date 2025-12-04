@@ -7,6 +7,7 @@
     'depends' : ['base', 'mail', 'product' , 'contacts' , 'purchase'],
 
     'data' : [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'data/window_actions.xml',
         'views/res_partner_views.xml',
