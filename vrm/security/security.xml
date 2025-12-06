@@ -62,26 +62,13 @@
         -->
         <field name="domain_force">[
             '|', '|', '|',
-            ('purchase_team_id', 'in', user.purchase_team_manager_ids.ids),
+            ('purchase_team_id.manager_id', '=', user.id),
             ('purchase_team_id', '=', False),
             ('responsible_id', '=', user.id),
             ('create_uid', '=', user.id)
             ]
         </field>
     </record>
-
-    <!-- User is Always the Responsible while he is logged in when making leads  -->
-<!--    <record id="rule_restrict_responsible_to_user" model="ir.rule">-->
-<!--        <field name="name">Responsible is User Rule</field>-->
-<!--        <field name="model_id" ref="vrm.model_vrm_vendor_lead"/>-->
-<!--        <field name="groups" eval="[(4, ref('vrm.group_vrm_user'))]"/>-->
-<!--        <field name="domain_force">[('responsible_id', '=', user.id)]</field>-->
-
-<!--        <field name="perm_read" eval="True"/>-->
-<!--        <field name="perm_write" eval="False"/>-->
-<!--        <field name="perm_create" eval="False"/>-->
-<!--        <field name="perm_unlink" eval="False"/>-->
-<!--    </record>-->
 
 
     <!-- Leave it For Now -->
@@ -94,6 +81,7 @@
         <!-- No group = applies to everyone -->
         <field name="domain_force">[(1,'=',1)]</field>
     </record>
+
 
 
     <!-- Tags Record Rules -->

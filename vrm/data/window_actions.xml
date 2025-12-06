@@ -6,10 +6,9 @@
             <field name="res_model">res.partner</field>
             <field name="view_mode">kanban,form</field>
             <field name="domain">[
-                '|', '|',
+                '|',
                 ('is_vendor', '=', True),
                 ('category_id', 'ilike', 'Vendor'),
-                ('purchase_team_id' , '=' , 'user.purchase_team_id.id')
                 ]
             </field>
         </record>

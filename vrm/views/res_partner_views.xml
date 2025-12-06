@@ -13,14 +13,14 @@
             <notebook position="inside">
                 <page string="VRM Information">
                     <group>
-                        <field name="vrm_tier"/>
-                        <field name="vrm_risk"/>
-                        <field name="vrm_approval_date"/>
-                        <field name="vrm_stage_id"/>
+<!--                        <field name="vrm_tier"/>-->
+<!--                        <field name="vrm_risk"/>-->
+<!--                        <field name="vrm_approval_date"/>-->
+<!--                        <field name="vrm_stage_id"/>-->
                     </group>
-                    <group string="Notes">
-                        <field name="vrm_notes"/>
-                    </group>
+<!--                    <group string="Notes">-->
+<!--                        <field name="vrm_notes"/>-->
+<!--                    </group>-->
 
                     <group>
                         <field name="purchase_team_id" />

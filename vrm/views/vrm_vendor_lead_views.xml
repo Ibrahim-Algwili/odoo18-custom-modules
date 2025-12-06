@@ -55,7 +55,10 @@
 
                             <div>
                                 Expected Spend:
-                                <field name="expected_annual_spend"/> <span><field name="currency_id"/></span>
+                                <field name="expected_annual_spend"/>
+                                <span>
+                                    <field name="currency_id"/>
+                                </span>
                             </div>
 
                             <div>
@@ -112,7 +115,7 @@
 
                         <!-- Buttons -->
                         <button name="action_won_lead" string="Won" type="object" class="btn-success"/>
-                        <button name="action_rfq" string="RFQ" type="object" class="btn-primary"/>
+                        <button name="action_rfq" string="RFQ" type="object" class="btn-primary" invisible="responsible_id != uid"/>
 
 
                         <!-- Widgets-->
@@ -143,10 +146,10 @@
                         <div>
                             <label for="probability" string="Probability ?" class="text-muted"/>
 
-                            <h2 class="mt0 o_row" style="align-items: baseline;">
+                            <h2 class="mt0">
                                 <span class="text-muted mr-1" style="font-size: 0.8em; font-weight: normal;">at</span>
                                 <field name="probability" nolabel="1"/>
-                                <span>%</span>
+                                <span class="text-muted mr-1" style="font-size: 0.8em; font-weight: normal;">%</span>
                             </h2>
                         </div>
                     </div>
@@ -156,8 +159,12 @@
 
                         <group>
                             <field name="partner_id" widget="many2one_avatar"/>
-                            <field name="purchase_team_id" widget="many2one_avatar"/>
-                            <field name="responsible_id" widget="many2one_avatar" />
+                            <field name="purchase_team_id" widget="many2one_avatar" options="{'no_create': True}" domain="['|','|',
+                                                                                                                 ('manager_id', '=', uid),
+                                                                                                                 ('user_ids', 'in', [uid]),
+                                                                                                                 ('id', '=', False)]"
+                            />
+                            <field name="responsible_id" widget="many2one_avatar" options="{'no_create': True}" readonly="is_team_manager == False" />
                         </group>
 
                         <group>
@@ -236,8 +243,8 @@
 
                 <!-- Filters -->
                 <filter name="my_leads" string="My Leads" domain="[('responsible_id', '=', uid)]"/>
-                <!--                <filter name="approved_leads" string="Approved Leads" domain="[('is_approved', '=', True)]"/>-->
-                <!--                <filter name="not_approved_leads" string="Not Approved Leads" domain="[('is_approved', '=', False)]"/>-->
+                <filter name="my_team_leads" string="My Team Leads" domain="[('purchase_team_id.manager_id', '=', uid)]"/>
+
             </search>
         </field>
     </record>

@@ -21,6 +21,7 @@ class VrmVendorLead(models.Model):
 
     responsible_id = fields.Many2one('res.users', string="Responsible", default=lambda self: self.env.user.id)
     purchase_team_id = fields.Many2one('purchase.team', string="Purchase Team")
+    is_team_manager = fields.Boolean(compute='_compute_is_team_manager', default=False)
 
     vrm_tier = fields.Selection([('a', 'Tier A'), ('b', 'Tier B'), ('c', 'Tier C')], string="Tier")
     vrm_risk = fields.Selection([('low', 'Low'), ('medium', 'Medium'), ('high', 'High')], string="Risk Level")
@@ -59,6 +60,42 @@ class VrmVendorLead(models.Model):
             self.vendor_website = partner.website
             self.vendor_country_id = partner.country_id.id
             # self.vendor_purchase_team = partner.purchase_team_id.name
+
+    @api.depends('purchase_team_id')
+    def _compute_is_team_manager(self):
+        for rec in self:
+            if rec.purchase_team_id and rec.purchase_team_id.manager_id == self.env.user:
+                rec.is_team_manager = True
+            else:
+                rec.is_team_manager = False
+
+
+
+    @api.onchange('purchase_team_id')
+    def _onchange_purchase_team_responsible_domain(self):
+        # if no Team Selected
+        if not self.purchase_team_id:
+            return {
+                'domain' : {
+                    'responsible_id' : []
+                }
+            }
+
+        # if the user is manager of the team sees all members
+        team = self.purchase_team_id
+        uid = self.env.uid
+
+        # ✅ إذا المدير
+        if team.manager_id and team.manager_id.id == uid:
+            member_ids = team.user_ids.ids or []
+            if uid not in member_ids:
+                member_ids.append(uid)
+
+            return {
+                'domain': {
+                    'responsible_id': [('id', 'in', member_ids)]
+                }
+            }
 
     # -----------------------------
     # --------- Activity ----------
@@ -140,6 +177,8 @@ class VrmVendorLead(models.Model):
             self.probability = stage_probability_map[self.vrm_stage_id.name]
         else:
             self.probability = 0.0
+
+
 
     def action_won_lead(self):
         """ Mark the Lead as Won """

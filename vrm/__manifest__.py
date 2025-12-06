@@ -10,6 +10,7 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'data/window_actions.xml',
+        'data/server_actions.xml',
         'views/res_partner_views.xml',
         'views/purchase_team_views.xml',
         'views/vrm_vendor_lead_views.xml',
