@@ -164,7 +164,7 @@
                                                                                                                  ('user_ids', 'in', [uid]),
                                                                                                                  ('id', '=', False)]"
                             />
-                            <field name="responsible_id" widget="many2one_avatar" options="{'no_create': True}" readonly="is_team_manager == False" />
+                            <field name="responsible_id" widget="many2one_avatar" modifiers="{'readonly': [['is_team_manager', '=', false]]}"/>
                         </group>
 
                         <group>
