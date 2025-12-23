@@ -8,7 +8,6 @@ from charset_normalizer.utils import is_latin
 _logger = logging.getLogger(__name__)
 from odoo import models , fields , api
 from odoo.exceptions import ValidationError
-from odoo.tools.populate import compute
 
 
 class PropertyHistory(models.Model) :

@@ -115,7 +115,7 @@
                     <notebook>
                         <page string="bedrooms">
                             <field name="line_ids" readonly="state == 'closed'" >
-                                <list editable="button">
+                                <list editable="bottom">
                                     <field name="description" />
                                     <field name="area" />
                                 </list>
@@ -124,7 +124,7 @@
 
                         <page string="Offers" groups="app_one.property_managers_group">
                             <field name="offer_ids" readonly="state == 'closed'" >
-                                <list editable="button">
+                                <list editable="bottom">
                                     <field name="price" />
                                     <field name="partner_id" />
                                     <!-- Offer -->

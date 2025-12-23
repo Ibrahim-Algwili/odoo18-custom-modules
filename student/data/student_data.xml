@@ -1,0 +1,39 @@
+<odoo>
+    <data>
+        <!--
+         if you put more than one record with the same id , it's gonna override and write on the same record
+         so the last thing the server will read it's the thing you will see in the frontend because you write on the same record
+         -->
+
+        <record id="student_00001" model="student.student">
+            <field name="name">Odoo Student 1</field>
+            <field name="age">22</field>
+            <field name="description">I'm Passion about Programming , and learn a new things every day</field>
+            <field name="is_bool"
+                   eval="False"/> <!-- eval converts to the real data type , but when just using <field></field> it's always send the value as string -->
+        </record>
+
+        <record id="student_00002" model="student.student">
+            <field name="name">Odoo Student 2</field>
+            <field name="age">22</field>
+            <field name="dob">1999-10-3</field>
+            <field name="description">I'm Passion about Programming , and learn a new things every day</field>
+        </record>
+
+        <record id="student_00003" model="student.student">
+            <field name="name">Odoo Student 3</field>
+            <field name="age">22</field>
+            <field name="dob">2006-10-6</field>
+            <field name="description">I'm Passion about Programming , and learn a new things every day</field>
+        </record>
+
+        <record id="student_00004" model="student.student">
+            <field name="name">Odoo Student 4</field>
+            <field name="age">22</field>
+            <field name="dob">2004-4-1</field>
+            <field name="description">I'm Passion about Programming , and learn a new things every day</field>
+        </record>
+
+
+    </data>
+</odoo>

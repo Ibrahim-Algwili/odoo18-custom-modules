@@ -11,7 +11,6 @@ from odoo.tools import float_compare
 _logger = logging.getLogger(__name__)
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-from odoo.tools.populate import compute
 from datetime import timedelta
 
 

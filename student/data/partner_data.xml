@@ -1,0 +1,43 @@
+<odoo>
+    <!-- Adding Image or binary fields (the same) -->
+    <record id="iron_man_partner" model="res.partner">
+        <field name="name">Iron Man</field>
+        <field name="image_1920" type="base64"
+               file="/home/ibrahim/PycharmProjects/odoo18/odoo18/odoo/custom_modules/student/static/description/iron-man.png"/>
+    </record>
+
+    <record id="jerry_partner" model="res.partner">
+        <field name="name">Iron Man</field>
+        <field name="image_1920" type="base64"
+               file="/home/ibrahim/PycharmProjects/odoo18/odoo18/odoo/custom_modules/student/static/description/jerry.png"/>
+    </record>
+
+    <record id="popeye_partner" model="res.partner">
+        <field name="name">Iron Man</field>
+        <field name="image_1920" type="base64"
+               file="/home/ibrahim/PycharmProjects/odoo18/odoo18/odoo/custom_modules/student/static/description/popeye.png"/>
+    </record>
+
+
+    <!-- Add M2O Field (using ref)-->
+    <record id="iron_man_partner" model="res.partner">
+        <field name="country_id" ref="base.ae"/>
+    </record>
+
+
+    <!-- Add to (O2M , M2M) Fields (using eval,Special Commands,ref) -->
+
+    <!-- M2M -->
+    <record id="iron_man_partner" model="res.partner">
+        <field name="category_id"
+               eval="[(6,0,[ref('base.res_partner_category_8'),ref('base.res_partner_category_3')])]"/>
+    </record>
+
+    <record id="jerry_partner" model="res.partner">
+        <field name="category_id" eval="[(4,ref('base.res_partner_category_8'))]"/>
+    </record>
+
+    <!-- (O2M) for O2M just add to the M2O field connected to and it will automatically appear in the O2M Field -->
+
+
+</odoo>

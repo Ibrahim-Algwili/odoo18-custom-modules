@@ -2,7 +2,6 @@ from email.policy import default
 
 from odoo import models , fields , api
 from odoo.exceptions import ValidationError
-from odoo.tools.populate import compute
 
 
 class Building(models.Model) :

@@ -1,0 +1,29 @@
+# -*- coding: utf-8 -*-
+{
+    'name': "Student",
+    'summary': "Short (1 phrase/line) summary of the module's purpose",
+    'license': 'LGPL-3',
+    'description': """
+Long description of module's purpose
+    """,
+    'author': "Ibrahim Ali",
+    'category': 'Uncategorized',
+    'version': '0.1',
+
+    'depends': ['base','mail','contacts'],
+
+    'data': [
+        'data/student.student.csv',
+        'data/res.partner.csv',
+        # 'data/partner_data.xml',
+        'data/student_data.xml',
+        'security/ir.model.access.csv',
+        'views/views.xml',
+        'views/templates.xml',
+    ],
+    # only loaded in demonstration mode
+    'demo': [
+        'demo/demo.xml',
+    ],
+}
+
