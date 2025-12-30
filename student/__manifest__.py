@@ -10,14 +10,15 @@ Long description of module's purpose
     'category': 'Uncategorized',
     'version': '0.1',
 
-    'depends': ['base','mail','contacts'],
+    'depends': ['base', 'mail', 'contacts'],
 
     'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
         'data/student.student.csv',
-        'data/res.partner.csv',
+        # 'data/res.partner.csv',
         # 'data/partner_data.xml',
         'data/student_data.xml',
-        'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
     ],
@@ -26,4 +27,3 @@ Long description of module's purpose
         'demo/demo.xml',
     ],
 }
-

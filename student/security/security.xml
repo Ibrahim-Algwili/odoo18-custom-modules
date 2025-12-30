@@ -1,0 +1,90 @@
+<odoo>
+    <data>
+
+        <!-- record rule -->
+        <record id="student_record_rule_xml" model="ir.rule">
+            <field name="name">Personal Student Students</field>
+            <field name="model_id" ref="model_student_student"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Access Rights With XML -->
+<!--        <record id="dummy_student_access_rights_xml" model="ir.model.access">-->
+<!--            <field name="name">dummy.student</field>-->
+<!--            <field name="model_id" ref="model_dummy_student"/>-->
+<!--            <field name="group_id" ref="base.group_user"/>-->
+<!--            <field name="perm_read" eval="1"/>-->
+<!--            <field name="perm_write" eval="1"/>-->
+<!--            <field name="perm_create" eval="1"/>-->
+<!--            <field name="perm_unlink" eval="1"/>-->
+<!--        </record>-->
+
+
+        <!--        Model ir.module.category-->
+        <!--        Useful Fields-->
+        <!--        name :- name of the category-->
+        <!--        description :- you can add description and Odoo will convert into tooltip-->
+        <!--        sequence :- You can define priority of category e.g top to bottom or bottom to top display the category-->
+        <!--        parent_id :- You can create parent child categories.-->
+
+        <!-- Parent Category -->
+        <record id="student_profile" model="ir.module.category">
+            <field name="name">Student Profile</field>
+        </record>
+
+
+        <!-- Sub Category 1 -->
+        <record id="student_category_one" model="ir.module.category">
+            <field name="name">Student Category One</field>
+            <field name="parent_id" ref="student.student_profile"/>
+            <field name="description">
+                1) ToolTip line 1
+                2) ToolTip line 2
+                3) ToolTip line 3
+            </field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Sub Category 1 Groups -->
+        <record id="student_group_one" model="res.groups">
+            <field name="name">Student Group One</field>
+            <field name="category_id" ref="student.student_category_one"/>
+        </record>
+
+        <record id="student_group_two" model="res.groups">
+            <field name="name">Student Group Two</field>
+            <field name="category_id" ref="student.student_category_one"/>
+            <field name="implied_ids" eval="[(4 , ref('student_group_one'))]"/>
+        </record>
+
+        <!-- Sub Category 2 -->
+        <record id="student_main_category" model="ir.module.category">
+            <field name="name">Student Main Category</field>
+            <field name="parent_id" ref="student.student_profile"/>
+        </record>
+
+        <!-- Sub Category 2 Groups -->
+        <record id="student_group_user" model="res.groups">
+            <field name="name">Student User</field>
+            <field name="category_id" ref="student.student_main_category"/>
+        </record>
+
+        <record id="student_group_manager" model="res.groups">
+            <field name="name">Student Manager</field>
+            <field name="category_id" ref="student.student_main_category"/>
+            <field name="implied_ids" eval="[(4 , ref('student_group_user'))]"/>
+        </record>
+
+        <record id="student_group_admin" model="res.groups">
+            <field name="name">Student Admin</field>
+            <field name="category_id" ref="student.student_main_category"/>
+            <field name="implied_ids" eval="[(4 , ref('student_group_manager'))]"/>
+        </record>
+
+    </data>
+</odoo>
