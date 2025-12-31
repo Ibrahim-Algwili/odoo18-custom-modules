@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="student_profile_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h1>Hello World</h1>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+    <record id="student_report_template" model="ir.actions.report">
+        <field name="name">Student Card Detail</field>
+        <field name="model">student.student</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">qweb_pdf_report.student_profile_report</field>
+        <field name="report_file">qweb_pdf_report.student_profile_report</field>
+        <field name="print_report_name">'Student-Report'</field>
+        <field name="binding_model_id" ref="student.model_student_student" />
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>
