@@ -122,7 +122,9 @@
     <!-- t-attf Tag Template -->
     <template id="sub_t_attf_statment_template">
 
-
+        <p t-attf-style="background-color:{{'red' if doc.name == 'Ibrahim' else 'blue'}};">
+            Hello this is attf
+        </p>
 
     </template>
 

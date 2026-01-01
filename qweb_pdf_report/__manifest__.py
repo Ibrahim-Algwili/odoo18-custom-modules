@@ -10,7 +10,8 @@
     'depends': ['base','student'],
 
     'data': [
-        'report/student_report_template.xml'
+        'report/student_report_template.xml',
+        'report/inherit_qweb_template.xml'
     ],
 
 }
