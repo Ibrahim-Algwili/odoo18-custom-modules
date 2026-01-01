@@ -1,27 +1,140 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
 
+    <!-- Main Template -->
     <template id="student_profile_report">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <t t-call="web.external_layout">
                     <div class="page">
-                        <h1>Hello World</h1>
+
+                        <hr/>
+                        <!-- Calling the Sub Templates -->
+<!--                        <t t-call="qweb_pdf_report.sub_data_output_template"/>-->
+<!--                        <t t-call="qweb_pdf_report.sub_if_statment_template"/>-->
+<!--                        <t t-call="qweb_pdf_report.sub_loop_statment_template"/>-->
+<!--                        <t t-call="qweb_pdf_report.sub_t_att_statment_template"/>-->
+                        <t t-call="qweb_pdf_report.sub_t_attf_statment_template"/>
                     </div>
+
                 </t>
             </t>
         </t>
     </template>
 
+    <!-- Sub Data Output Template -->
+    <template id="sub_data_output_template">
+        ---------- Data OutPut --------
+        <h1>Hello World</h1>
 
+        <!-- >>>>>> t-field , t-esc , t-out <<<<<<<<<<< -->
+        <h3 t-field="doc.name"/>
+        <t t-esc="doc.name"/>
+
+        <!-- Variable -->
+        <t t-set="var" t-value="10"/>
+        <t t-esc="var"/>
+        <!--                        <t t-filed="var" />-->
+
+    </template>
+
+    <!-- sub if Statment Template -->
+    <template id="sub_if_statment_template">
+        ---------- if Statment --------
+
+        <!-- >>>>>> if statment <<<<<<<<<<< -->
+
+        <!-- Long Way -->
+        <t t-if="doc.name == 'Ibrahim'">
+            <p>** Yes ** this is : -->
+                <span t-esc="doc.name"/>
+            </p>
+        </t>
+        <t t-elif="doc.name == 'Ali'">
+            <p>
+                <span t-esc="doc.name"/>
+                is my fav student
+            </p>
+        </t>
+        <t t-else="">
+            <p>** No ** this is : -->
+                <span t-esc="doc.name"/>
+            </p>
+        </t>
+
+        <!-- Short Way -->
+        <p t-if="doc.name == 'Ibrahim'">** Yes ** this is : -->
+            <span t-esc="doc.name"/>
+        </p>
+        <p t-elif="doc.name == 'Ali'">
+            <span t-esc="doc.name"/>
+            is my fav student
+        </p>
+        <p t-else="">** No ** this is : -->
+            <span t-esc="doc.name"/>
+        </p>
+    </template>
+
+    <!-- sub Loop Statment Template -->
+    <template id="sub_loop_statment_template">
+        <!--  >>>>>> Loop Statment <<<<<<<<<<< -->
+        ---------- Foor Loop --------
+
+        <t t-foreach="[1,2,3,4,5]" t-as="item">
+            <p t-esc="item"/>
+            (sequence of foreach loop --><span t-esc="item_index"/>)
+            (is this the first index? --><span t-esc="item_first"/>)
+            (is this the last index? --><span t-esc="item_last"/>)
+
+            <!-- printing the loop variable -->
+            <t t-esc="item"/>
+            <t t-esc="item_value"/>
+
+            <p t-esc="item_parity"/> <!-- print even or odoo -->
+            <p t-esc="item_even"/> <!-- print true or false -->
+            <p t-esc="item_odd"/> <!-- print true or false -->
+        </t>
+
+        <hr/>
+    </template>
+
+    <!-- t-att Tag Template -->
+    <template id="sub_t_att_statment_template">
+        <!-- using t-att Tag -->
+        <a href="www.google.com">Google</a>
+
+        <!-- One Attribute -->
+        <p t-att-style="'background-color:blue;'">Blue</p>
+        <p t-att="['style' , 'background-color : red;']">Hello Bigb..</p>
+
+        <!-- Multiple Attributes -->
+        <p t-att="{'style':'background-color:green' , 'href':'www.youtube.com'}">
+            YouTube
+        </p>
+
+        <!-- Condition to apply the attribute -->
+        <p t-att-style="'background-color:brown;'? doc.name == 'Ali' : 'background-color:yellow;'">
+            Conditin on t-att
+        </p>
+        <hr/>
+    </template>
+
+    <!-- t-attf Tag Template -->
+    <template id="sub_t_attf_statment_template">
+
+
+
+    </template>
+
+    <!-- Main Report Action -->
     <record id="student_report_template" model="ir.actions.report">
         <field name="name">Student Card Detail</field>
         <field name="model">student.student</field>
-        <field name="report_type">qweb-pdf</field>
+        <field name="report_type">qweb-html</field>
         <field name="report_name">qweb_pdf_report.student_profile_report</field>
         <field name="report_file">qweb_pdf_report.student_profile_report</field>
         <field name="print_report_name">'Student-Report'</field>
-        <field name="binding_model_id" ref="student.model_student_student" />
+        <field name="binding_model_id" ref="student.model_student_student"/>
         <field name="binding_type">report</field>
     </record>
 
