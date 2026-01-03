@@ -25,6 +25,7 @@ class student(models.Model):
     dob = fields.Date()
     description = fields.Text()
     is_bool = fields.Boolean(default=True)
+    image = fields.Image()
 
 
 
@@ -37,6 +38,12 @@ class student(models.Model):
         stud_obj = self.search_fetch([] , [])
         for stud in stud_obj:
             print("name is :" , stud.name)
+
+
+
+    # print report
+    def print_report(self):
+        return self.env.ref('custom_header_footer_pdf.student_report_template').report_action(self)
 
 
     def action_log(self):

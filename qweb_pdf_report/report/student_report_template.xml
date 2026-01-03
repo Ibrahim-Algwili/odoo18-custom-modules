@@ -128,6 +128,23 @@
 
     </template>
 
+
+    <!-- Custom Paper Format -->
+    <record id="student_custom_report_paper_format" model="report.paperformat" >
+        <field name="name">Student Custom Paper Format</field>
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">5</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_spacing">55</field>
+        <field name="dpi">90</field>
+
+    </record>
+
     <!-- Main Report Action -->
     <record id="student_report_template" model="ir.actions.report">
         <field name="name">Student Card Detail</field>
@@ -138,6 +155,7 @@
         <field name="print_report_name">'Student-Report'</field>
         <field name="binding_model_id" ref="student.model_student_student"/>
         <field name="binding_type">report</field>
+<!--        <field name="paperformat_id" ref="qweb_pdf_report.student_custom_report_paper_format" />-->
     </record>
 
 </odoo>

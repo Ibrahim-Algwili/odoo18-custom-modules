@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <!-- Main Template -->
+    <template id="student_profile_custom_header_footer_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="custom_header_footer_pdf.student_header_footer_template">
+                    <h1 t-field="doc.name"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Header/Footer Layout Template -->
+    <template id="student_header_footer_template">
+
+        <!-- Taking the company (search in odoo addons for ("external_layout"))-->
+        <t t-if="not o" t-set="o" t-value="doc"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+
+
+        <!-- Header -->
+        <div class="header">
+            <div class="text-center" style="border-bottom: 1px solid black;">
+                <div class="row">
+                    <div class="col-3 mb4">
+                        <img alt="no image" t-if="company.logo" t-att-src="image_data_uri(company.logo)"
+                             style="max-height:90px;"/>
+                    </div>
+                    <div class="col-9 text-right">
+                        <span t-if="company.company_details" t-field="company.company_details"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Part -->
+        <div class="article o_report_layout_standard">
+            <t t-out="0"/>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer o_standard_footer">
+            <div class="row text-center" style="border-top: 1px solid black;">
+                <div class="col-4">
+                    Email : <u><span t-field="company.email" style="color:blue;" /></u>
+                </div>
+                <div class="col-4">
+                    Phone : <span t-field="company.phone" style="color:blue;" />
+                    <br/>
+                    Mobile : <span t-field="company.mobile" style="color:blue;" />
+                </div>
+                <div class="col-4">
+                    WebSite : <u><span t-field="company.website" style="color:blue;" /></u>
+                </div>
+
+                <!-- doing the same thing with predefined field (report_footer) -->
+<!--                <span t-field="company.report_footer" />-->
+                <br/>
+
+                <!-- Page Number -->
+                <p> <b> Page : </b> <span class="page" /> / <span class="topage" /> </p>
+
+                <!-- Time Stamp -->
+                <p> <b> Time : </b> <span t-out="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%y %H:%M')" /> </p>
+
+            </div>
+        </div>
+    </template>
+
+    <!-- Main Report Action -->
+    <record id="student_report_template" model="ir.actions.report">
+        <field name="name">Custom Student Headre/Footer</field>
+        <field name="model">student.student</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">custom_header_footer_pdf.student_profile_custom_header_footer_report</field>
+        <field name="report_file">custom_header_footer_pdf.student_profile_custom_header_footer_report</field>
+        <field name="print_report_name">'Student-Report'</field>
+        <field name="binding_model_id" ref="student.model_student_student"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

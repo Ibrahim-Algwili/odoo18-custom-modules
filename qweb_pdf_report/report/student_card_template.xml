@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="student_card_template_report">
+        <t t-call="web.basic_layout">
+            <style>
+                .student-card-table {
+                border-radius: 5px 5px 0 0;
+                overflow: hidden;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                }
+                .student-card-table thead tr {
+                background-color: #714B67; /* لون أودو الرسمي */
+                color: #ffffff;
+                text-align: left;
+                }
+                .student-card-table th,
+                .student-card-table td {
+                padding: 12px 15px;
+                border: 1px solid #dddddd;
+                }
+                .student-card-table tbody tr:nth-of-type(even) {
+                background-color: #f3f3f3;
+                }
+                .student-card-table tbody tr:last-of-type {
+                border-bottom: 2px solid #714B67;
+                }
+                .card-container {
+                padding: 10px;
+                page-break-inside: avoid; /* يمنع انقسام الجدول بين صفحتين */
+                }
+                p { margin: 0; } /* إزالة المسافات الزائدة داخل الخلايا */
+            </style>
+            <div class="page">
+                <t t-foreach="docs" t-as="stud">
+                    <div class="col-6 card-container">
+                        <table class="student-card-table">
+                            <thead>
+                                <tr>
+                                    <th>Dynamic Image 1</th>
+                                    <th>Static Image</th>
+                                    <th>Internet Image</th>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Date of Birth</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <!-- Dynamic Image -->
+                                    <td>
+<!--                                        <img t-att-src="data:image/png;base64,#{stud.image}"-->
+                                        <img t-att-src="image_data_uri(stud.image)" t-if="stud.image"
+                                             alt="No Image" width="50" height="50" />
+
+                                        <!-- another way to show the image -->
+                                        <div t-field="stud.image"
+                                             t-options="{'widget':'image' , 'img_style':'width:50px;height:50px' , 'width':50 , 'height':50}" />
+                                    </td>
+                                    <!-- Static Image -->
+                                    <td>
+                                        <img src="/qweb_pdf_report/static/description/icon.ico" alt="Image not Loading"
+                                             height="50" width="50"/>
+                                    </td>
+                                    <!-- Internet URI Image -->
+                                    <td>
+                                        <img src="https://petapixel.com/assets/uploads/2024/01/High-resolution-image-of-sun-800x420.jpg" alt="Image not Loading"
+                                             height="60" width="100"/>
+                                    </td>
+                                    <td>
+                                        <strong>
+                                            <span t-field="stud.name"/>
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        <strong>
+                                            <span t-field="stud.age"/>
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        <strong>
+                                            <span t-field="stud.dob"/>
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        <strong>
+                                            <span t-field="stud.description"/>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+
+    <record id="student_card_template" model="ir.actions.report">
+        <field name="name">Student Card Template</field>
+        <field name="model">student.student</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">qweb_pdf_report.student_card_template_report</field>
+        <field name="report_file">qweb_pdf_report.student_card_template_report</field>
+        <field name="print_report_name">'Student-Card'</field>
+        <field name="binding_model_id" ref="student.model_student_student"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>
