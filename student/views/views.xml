@@ -26,6 +26,7 @@
                         <header>
                             <field name="image" widget="image" class="oe_avatar"/>
 
+                            <button name="popup" type="object" string="Bus Notification" />
                             <button name="action_seach_fetch" type="object" string="action" class="btn-primary" />
                             <button name="action_log" type="object" string="Log" class="btn-secondary" />
                             <button name="print_report" type="object" string="Print" class="btn-primary" />

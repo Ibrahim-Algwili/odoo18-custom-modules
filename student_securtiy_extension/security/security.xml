@@ -1,0 +1,18 @@
+<odoo>
+
+    <!-- Extend the Existing Category -->
+    <record id="student.student_main_category" model="ir.module.category">
+        <field name="name">Extended Student Main Category</field>
+    </record>
+
+    <record id="senior_teacher_group" model="res.groups">
+        <field name="name">Senior Teacher</field>
+        <field name="category_id" ref="student.student_main_category"/>
+        <field name="implied_ids" eval="[(4 , ref('student.student_group_manager'))]"/>
+    </record>
+
+    <record id="student.student_group_admin" model="res.groups">
+        <field name="implied_ids" eval="[(4 , ref('student_securtiy_extension.senior_teacher_group'))]"/>
+    </record>
+
+</odoo>

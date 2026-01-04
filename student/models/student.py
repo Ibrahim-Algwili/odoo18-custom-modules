@@ -39,8 +39,6 @@ class student(models.Model):
         for stud in stud_obj:
             print("name is :" , stud.name)
 
-
-
     # print report
     def print_report(self):
         return self.env.ref('custom_header_footer_pdf.student_report_template').report_action(self)
@@ -52,6 +50,32 @@ class student(models.Model):
         _logger.error("Custom Error Log")
         _logger.critical("Custom Critical Log")
         _logger.warning("Custom Warning Log")
+
+
+    #Notificaion
+    def popup(self):
+        message = f"this is from {self.name}."
+        self.env['bus.bus']._sendone(self.env.user.partner_id, # the partner you want the notificatin appear to
+                                     "simple_notification",
+                                     {
+                                         "title":"Warning",
+                                         "message":message,
+                                         "sticky":False, # if True the message won't remove from the screen
+                                         "warning":True,
+                                     }
+                                     )
+
+
+    def write(self, values):
+        res = super(student, self).write(values)
+        self.env['bus.bus']._sendone(self.env.user.partner_id,
+                                     "simple_notification",
+                                     {
+                                         "title":"Info",
+                                         "message":f"{values} successfully updated.",
+                                     }
+                                     )
+        return res
 
 
 
