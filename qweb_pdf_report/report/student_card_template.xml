@@ -97,16 +97,4 @@
         </t>
     </template>
 
-
-    <record id="student_card_template" model="ir.actions.report">
-        <field name="name">Student Card Template</field>
-        <field name="model">student.student</field>
-        <field name="report_type">qweb-html</field>
-        <field name="report_name">qweb_pdf_report.student_card_template_report</field>
-        <field name="report_file">qweb_pdf_report.student_card_template_report</field>
-        <field name="print_report_name">'Student-Card'</field>
-        <field name="binding_model_id" ref="student.model_student_student"/>
-        <field name="binding_type">report</field>
-    </record>
-
 </odoo>

@@ -1,0 +1,39 @@
+<odoo>
+
+    <record id="student_card_template" model="ir.actions.report">
+        <field name="name">Student Card Template</field>
+        <field name="model">student.student</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">qweb_pdf_report.student_card_template_report</field>
+        <field name="report_file">qweb_pdf_report.student_card_template_report</field>
+        <field name="print_report_name">'Student-Card'</field>
+        <field name="binding_model_id" ref="student.model_student_student"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Main Report Action -->
+    <record id="student_report_template" model="ir.actions.report">
+        <field name="name">Student Card Detail</field>
+        <field name="model">student.student</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">qweb_pdf_report.student_profile_report</field>
+        <field name="report_file">qweb_pdf_report.student_profile_report</field>
+        <field name="print_report_name">'Student-Report'</field>
+        <field name="binding_model_id" ref="student.model_student_student"/>
+        <field name="binding_type">report</field>
+<!--        <field name="paperformat_id" ref="qweb_pdf_report.student_custom_report_paper_format" />-->
+    </record>
+
+
+    <!-- Sale Order Copy Report -->
+    <record id="sale_order_copy_report_action" model="ir.actions.report">
+        <field name="name">Sale Order Report</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">qweb_pdf_report.sale_order_copy_report</field>
+        <field name="report_file">qweb_pdf_report.sale_order_copy_report</field>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>
