@@ -1,0 +1,269 @@
+<odoo>
+
+    <template id="stock_picking_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="company" t-value="o.company_id or res_company"/>
+                <t t-call="web.external_layout">
+                    <div class="page" dir="rtl" style="direction: rtl; font-family: 'Cairo', sans-serif;">
+
+                        <t t-set="is_ready" t-value="o.state == 'assigned'"/>
+                        <t t-if="o.picking_type_id.code == 'outgoing'">
+                            <t t-set="title" t-value="is_ready and 'طلب تسليم' or 'أمر تسليم' "/>
+                        </t>
+                        <t t-elif="o.picking_type_id.code == 'incoming'">
+                            <t t-set="title" t-value="is_ready and 'طلب إستلام' or 'أمر إستلام' "/>
+                        </t>
+                        <t t-else="">
+                            <t t-set="title" t-value="is_ready and 'طلب تحويل داخلي' or 'أمر تحويل داخلي'"/>
+                        </t>
+
+                        <div class="row mb-4 mt-4 text-center">
+                            <div class="col-12">
+                                <strong style="font-size:18px">
+                                    <t t-esc="title"/>
+                                    <p>شركة: <span t-field="company.name"/></p>
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4 mt-4 text-center">
+                            <div class="col-12">
+                                <strong style="font-size:18px">
+                                    <t t-esc="o.name"/>
+                                </strong>
+                            </div>
+                        </div>
+
+
+                        <!-- Customer Info -->
+                        <div class="row mb-4 mt-4" style="font-size: 14px;">
+                            <div class="col-6">
+                                <div class="row">
+                                    <div class="col-10">
+                                        <strong style="margin-right:50px;">السيد/السادة:</strong>
+                                        <span style="margin: 10px;">
+                                            <t t-esc="o.partner_id.name"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="row">
+                                    <div class="col-10" style="text-align:left;">
+                                        <strong>تاريخ الأمر:</strong>
+                                        <span style="margin: 10px;">
+                                            <t t-esc="o.scheduled_date.strftime('%d/%m/%Y') or ''"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4 mt-4" style="font-size: 14px;">
+                            <div class="col-6">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <strong style="margin-right:30px;">رقم الهاتف:</strong>
+                                        <span style="margin: 10px;">
+                                            <t t-esc="o.partner_id.mobile"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Line Seperator -->
+                        <div class="row">
+                            <div class="col-12" style="width:100%; height:6px; background-color:#EFEFEF;"/>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="mb-4 mt-4" style="border: 1px solid black; padding: 10px; font-size: 14px;">
+                            <div class="row" style="padding-bottom: 4px;">
+                                <div class="col-6 pb-1" t-if="o.picking_type_code in ['outgoing','internal']">
+                                    <div class="col-10">
+                                        <strong style="padding:10px;">من مخزن :</strong>
+                                        <span t-field="o.location_id.complete_name"/>
+                                    </div>
+                                </div>
+                                <div class="col-6 p-1" t-if="o.picking_type_code in ['incoming','internal']"
+                                     style="text-align:left;">
+                                    <div class="col-10">
+                                        <strong style="padding:10px;">الى مخزن :</strong>
+                                        <span t-field="o.location_dest_id.complete_name"/>
+                                    </div>
+                                </div>
+
+                                <div class="co-6">
+                                    <div class="col-10">
+                                        <strong>المستند المصدر :</strong>
+                                        <span t-field="o.origin"/>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <!-- Line Seperator -->
+                        <div class="row">
+                            <div class="col-12" style="width:100%; height:6px; background-color:#EFEFEF;"/>
+                        </div>
+
+
+                        <table class="table table-sm o_main_table"
+                               style="width:100%; border-collapse:collapse; margin-top:20px; font-size:14px; height:12px;">
+                            <thead>
+                                <tr style="border: 1px solid black;">
+                                    <th style="text-align:center; width:40px; font-weight:bold; border: 1px solid black; background-color:#EFEFEF; color:#000000">
+                                        م
+                                    </th>
+                                    <th style="text-align:center; width:120px; font-weight:bold; border: 1px solid black; background-color:#EFEFEF; color:#000000">
+                                        الكود
+                                    </th>
+                                    <th style="text-align:center; width:400px ; font-weight:bold; border: 1px solid black; background-color:#EFEFEF; color:#000000">
+                                        الصنف
+                                    </th>
+
+                                    <t t-if="o.state == 'done' and o.picking_type_code in ['internal']">
+                                        <th style="text-align:center; font-weight:bold; border: 1px solid black; background-color:#EFEFEF; color:#000000">
+                                            الكمية المسحوبة
+                                        </th>
+                                    </t>
+                                    <t t-if="o.state == 'done' and o.picking_type_code in ['incoming','outgoing'] ">
+                                        <th style="text-align: center ;border: 1px solid black; font-weight: bold; font-size: 14px; background-color: #EFEFEF; color: #000000;">
+                                            الكمية المطلوبة
+                                        </th>
+                                    </t>
+                                    <t t-if="o.state == 'done' and o.picking_type_code in ['incoming','internal'] ">
+                                        <th style="text-align: center ;border: 1px solid black; font-weight: bold; font-size: 14px; background-color: #EFEFEF; color: #000000;">
+                                            الكمية المستلمة
+                                        </th>
+                                    </t>
+                                    <t t-if="o.state == 'done' and o.picking_type_code in ['outgoing'] ">
+                                        <th style="text-align: center;border: 1px solid black; font-weight: bold; font-size: 14px; background-color: #EFEFEF; color: #000000;">
+                                            الكمية المسلمة
+                                        </th>
+                                    </t>
+
+                                    <t t-if="o.picking_type_code in ['outgoing']">
+                                        <th style="text-align: center;border: 1px solid black; font-weight: bold; font-size: 14px; background-color: #EFEFEF; color: #000000;">
+                                            الموقع
+                                        </th>
+                                    </t>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <t t-set="counter" t-value="1"/>
+                                <t t-set="total_uom_qty" t-value="0"/>
+                                <t t-set="total_qty" t-value="0"/>
+                                <t t-foreach="o.move_ids_without_package" t-as="line">
+                                    <tr style="border: 1px solid black;">
+                                        <td style="text-align:center; border: 1px solid black; background-color:#ffffff; color:#000000">
+                                            <t t-esc="counter"/>
+                                            <t t-set="counter" t-value="counter + 1"/>
+                                        </td>
+                                        <td style="text-align:center; border: 1px solid black; background-color:#ffffff; color:#000000">
+                                            <t t-esc="line.product_id.default_code"/>
+                                        </td>
+                                        <td style="text-align:center; border: 1px solid black; background-color:#ffffff; color:#000000">
+                                            <t t-esc="line.product_id.name"/>
+                                        </td>
+                                        <td style="text-align:center; border: 1px solid black; background-color:#ffffff; color:#000000">
+                                            <t t-esc="int(line.product_uom_qty)"/>
+                                        </td>
+                                        <t t-if="o.state == 'done'">
+                                            <td style="text-align:center; border: 1px solid black; background-color:#ffffff; color:#000000">
+                                                <t t-esc="int(line.quantity)"/>
+                                            </td>
+                                        </t>
+                                        <t t-if="o.picking_type_code in ['outgoing']">
+                                            <td class="text-right"
+                                                style="border:1px solid black; font-size:16px; background-color: #FFFFFF;">
+                                                <t t-esc="line.location_id.name"/>
+                                            </td>
+                                        </t>
+
+                                        <t t-set="total_uom_qty" t-value="total_uom_qty + line.product_uom_qty"/>
+                                        <t t-set="total_qty" t-value="total_qty + line.quantity"/>
+
+                                    </tr>
+                                </t>
+
+                                <tr>
+                                    <td colspan="3" class="text-center"
+                                        style="border: 1px solid black;font-weight: bold; font-size: 14px; background-color: #EFEFEF; color: #000000;">
+                                        المجموع
+                                    </td>
+
+                                    <td class="text-center"
+                                        style="border: 1px solid black;font-weight: bold; font-size: 14px; background-color: #EFEFEF; color: #000000;">
+                                        <t t-esc="int(total_uom_qty)"/>
+                                    </td>
+
+                                    <td t-if="o.state == 'done'" class="text-center"
+                                        style="border: 1px solid black;font-weight: bold; font-size: 14px; background-color: #EFEFEF; color: #000000;">
+                                        <t t-esc="int(total_qty)"/>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+                        <!-- Line Seperator -->
+                        <div class="row">
+                            <div class="col-12" style="width:100%; height:6px; background-color:#EFEFEF;"/>
+                        </div>
+
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+
+                        <!-- Signatures -->
+                        <div class="row">
+                            <div class="col-6" t-if="o.picking_type_code in ['incoming','internal']">
+                                <table align="center" width="100%">
+                                    <tbody>
+                                        <tr style="height:80px; width:100%">
+                                            <td width="50%"
+                                                style="background-color: #EFEFEF; font-size: px14 !important; color: #000000; vertical-align: middle;">
+                                                <center>مسئول المخزن المستلم</center>
+                                            </td>
+                                            <td style="font-size: 14px !important; vertical-align: middle; background-color:#ffffff;">
+                                                <center>..................................................</center>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="col-6" t-if="o.picking_type_code in ['outgoing','internal']">
+                                <table align="center" width="100%">
+                                    <tbody>
+                                        <tr style="height:80px; width:100%">
+                                            <td width="50%"
+                                                style="background-color: #EFEFEF; font-size: px14 !important; color: #000000; vertical-align: middle;">
+                                                <center>مسئول المخزن المسلم</center>
+                                            </td>
+                                            <td style="font-size: 14px !important; vertical-align: middle; background-color:#ffffff;">
+                                                <center>..................................................</center>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

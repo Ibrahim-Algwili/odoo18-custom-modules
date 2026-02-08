@@ -1,0 +1,122 @@
+<odoo>
+
+    <template id="payment_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout" t-lang="o.partner_id.lang">
+                    <div class="page">
+
+                        <header style="text-align:center;">
+                            <h6>
+                                <b>مستند صرف</b>
+                            </h6>
+                        </header>
+
+                        <div class="row" style="text-align:center;">
+                            <div class="col-6">
+                                <span style="color:#3783d4;">
+                                    <b>Printed By:</b>
+                                </span>
+                                <span>
+                                    <b>
+                                        <t t-esc="user.name"/>
+                                    </b>
+                                </span>
+                            </div>
+
+                            <div class="col-6">
+                                <span style="color:#3783d4;">
+                                    <b>Print Date:</b>
+                                </span>
+                                <span>
+                                    <b>
+                                        <t t-esc="o.date"/>
+                                    </b>
+                                </span>
+                            </div>
+
+                            <hr/>
+
+                        </div>
+
+                        <div name="content">
+                            <span>
+                                <b style="color:#3783d4;">Number of Doc :</b>
+                                <t t-esc="o.name"/>
+                            </span>
+                            <br/>
+                            <span>
+                                <b style="color:#3783d4;">Partner :</b>
+                                <t t-esc="o.partner_id.name"/>
+                            </span>
+                            <br/>
+                            <span>
+                                <b style="color:#3783d4;">Amount :</b>
+                                <t t-esc="o.amount"/>
+                            </span>
+                            <br/>
+                            <span>
+                                <b style="color:#3783d4;">Notes :</b>
+                                <t t-esc="o.memo"/>
+                            </span>
+                        </div>
+
+                        <br/>
+                        <br/>
+                        <br/>
+
+
+                        <div class="row">
+
+                            <div class="col-6">
+                                <table class="table table-sm" style="width:100%; table-layout: fixed;">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2" class="text-center" style="border-bottom: 1px solid black;">
+                                                Receiver
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        <tr  style="height:40px">
+                                            <td style="width: 30%; vertical-align:middle;">Name</td>
+                                            <td style="width: 70%; vertical-align:middle;">.................................................</td>
+                                        </tr>
+                                        <tr style="height:100px ">
+                                            <td style="vertical-align:middle;">Signature</td>
+                                            <td style="vertical-align:middle;">.................................................</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            <div class="col-6">
+                                <table class="table table-sm" style="width:100%; table-layout: fixed;">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2" class="text-center" style="border-bottom: 1px solid black;">
+                                                Money Saver
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        <tr  style="height:40px">
+                                            <td style="width: 30%; vertical-align:middle;">Name</td>
+                                            <td style="width: 70%; vertical-align:middle;">.................................................</td>
+                                        </tr>
+                                        <tr style="height:100px ">
+                                            <td style="vertical-align:middle;">Signature</td>
+                                            <td style="vertical-align:middle;">.................................................</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

@@ -14,6 +14,8 @@
         'report/inherit_qweb_template.xml',
         'report/student_card_template.xml',
         'report/sale_order_report.xml',
+        'report/payments_report.xml',
+        'report/stock_picking_report.xml',
         'report/student_report.xml',
     ],
 

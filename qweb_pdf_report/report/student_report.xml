@@ -36,4 +36,26 @@
         <field name="binding_type">report</field>
     </record>
 
+    <!-- Payments Report -->
+    <record id="payments_report_action" model="ir.actions.report">
+        <field name="name">Payments Report Copy</field>
+        <field name="model">account.payment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">qweb_pdf_report.payment_report</field>
+        <field name="report_file">qweb_pdf_report.payment_report</field>
+        <field name="binding_model_id" ref="account.model_account_payment"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Stock Picking Report -->
+    <record id="stock_picking_report_action" model="ir.actions.report">
+        <field name="name">Picking Operation</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">qweb_pdf_report.stock_picking_report</field>
+        <field name="report_file">qweb_pdf_report.stock_picking_report</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record>
+
 </odoo>
