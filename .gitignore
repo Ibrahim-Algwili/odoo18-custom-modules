@@ -25,3 +25,6 @@ Thumbs.db
 *.zip
 *.tar.gz
 *.rar
+
+
+.pre-commit-config.yaml

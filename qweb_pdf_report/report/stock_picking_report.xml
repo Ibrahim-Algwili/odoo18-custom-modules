@@ -12,7 +12,7 @@
                             <t t-set="title" t-value="is_ready and 'طلب تسليم' or 'أمر تسليم' "/>
                         </t>
                         <t t-elif="o.picking_type_id.code == 'incoming'">
-                            <t t-set="title" t-value="is_ready and 'طلب إستلام' or 'أمر إستلام' "/>
+                            <t t-set="title" t-value="is_ready and 'طلب إستلام' or 'أمر إستلام ' "/>
                         </t>
                         <t t-else="">
                             <t t-set="title" t-value="is_ready and 'طلب تحويل داخلي' or 'أمر تحويل داخلي'"/>

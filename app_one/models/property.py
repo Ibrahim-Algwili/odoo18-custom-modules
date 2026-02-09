@@ -15,21 +15,25 @@ from datetime import timedelta
 
 
 class Property(models.Model):
-    _name = 'property'
-    _description = 'Property'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _name = "property"
+    _description = "Property"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
 
     # required default is (False)
     name = fields.Char(string="Name", required=True, size=20, translate=True)
     ref = fields.Char(default="New", readonly=1)
     description = fields.Text(tracking=1)
     postcode = fields.Char(required=1)
-    date_availability = fields.Date(tracking=1, default=date.today() + timedelta(days=90), copy=False)
+    date_availability = fields.Date(
+        tracking=1, default=date.today() + timedelta(days=90), copy=False
+    )
     expected_selling_date = fields.Date(tracking=1)
     is_late = fields.Boolean()
     expected_price = fields.Float(digits=(0, 2))  # how many digits after the (.)
     selling_price = fields.Float(digits=(0, 2), readonly=1, copy=False)
-    diff = fields.Float(compute="_compute_diff", readonly=1)  # readonly (1 by default with compute)
+    diff = fields.Float(
+        compute="_compute_diff", readonly=1
+    )  # readonly (1 by default with compute)
     bedrooms = fields.Integer(default=2)
     facades = fields.Integer()
     garage = fields.Boolean(groups="app_one.property_manager_group")
@@ -38,60 +42,59 @@ class Property(models.Model):
     living_area = fields.Integer()
     total_area = fields.Integer(compute="_compute_total_area")
     file = fields.Binary(string="file", attachment="True")
-    garden_orientation = fields.Selection([
-        ('north', 'North'),
-        ('south', 'South'),
-        ('east', 'East'),
-        ('west', 'West')
-    ], default='west')
+    garden_orientation = fields.Selection(
+        [("north", "North"), ("south", "South"), ("east", "East"), ("west", "West")],
+        default="west",
+    )
 
-    property_type_id = fields.Many2one('property.type')
+    property_type_id = fields.Many2one("property.type")
 
     create_time = fields.Datetime(default=fields.Datetime.now())
-    next_time = fields.Datetime(compute='_compute_next_time')
+    next_time = fields.Datetime(compute="_compute_next_time")
 
     # Relational Fields (will added in the DB as foreign key)
     # Relation (M2O)
-    owner_id = fields.Many2one('owner')
+    owner_id = fields.Many2one("owner")
 
     # Relation (M2M)
-    tag_ids = fields.Many2many('tag')
+    tag_ids = fields.Many2many("tag")
 
     # Related Fields
     owner_address = fields.Char(related="owner_id.address", readonly=0)
     owner_phone = fields.Char(related="owner_id.phone", readonly=1)
 
-    offer_ids = fields.One2many('property.offer' , 'property_id')
+    offer_ids = fields.One2many("property.offer", "property_id")
     best_price = fields.Float(compute="_compute_best_price")
 
     # State Field
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('pending', 'Pending'),
-        ('sold', 'Sold'),
-        ('closed', 'Closed')
-    ], default='draft')
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("pending", "Pending"),
+            ("sold", "Sold"),
+            ("closed", "Closed"),
+        ],
+        default="draft",
+    )
 
     # Relation with property.line
-    line_ids = fields.One2many('property.line', 'property_id')
+    line_ids = fields.One2many("property.line", "property_id")
 
     active = fields.Boolean(default=True)  # this used for Archiving
 
     # Constraints on the Data Tier
     _sql_constraints = [
-        ('unique_name', 'unique(name)', 'This name is Exist'),
+        ("unique_name", "unique(name)", "This name is Exist"),
         # ('price_positive', 'CHECK(selling_price <= 0)', 'Selling Price Must be Positive'),
     ]
 
     # Python Constraints
-    @api.constrains('selling_price', 'expected_price')
+    @api.constrains("selling_price", "expected_price")
     def _check_selling_price(self):
         for rec in self:
             # تأكد أن القيم موجودة
             if not rec.expected_price or not rec.selling_price:
                 continue
-
-
 
             # تحقق أن السعر موجب
             if float_compare(rec.selling_price, 0.0, precision_digits=2) <= 0:
@@ -99,57 +102,53 @@ class Property(models.Model):
 
             # تحقق من نسبة 90%
             limit_price = rec.expected_price * 0.9
-            if float_compare(rec.selling_price, limit_price,precision_digits=2) < 0:
+            if float_compare(rec.selling_price, limit_price, precision_digits=2) < 0:
                 raise ValidationError(
                     f"Selling Price ({rec.selling_price}) shouldn't be less than 90% of Expected Price ({rec.expected_price})."
                 )
 
-    @api.constrains('expected_price')
+    @api.constrains("expected_price")
     def _check_expected_price(self):
         for rec in self:
             if rec.expected_price <= 0.0:
-                raise ValidationError('Expected Price should be Greater Than Zero')
+                raise ValidationError("Expected Price should be Greater Than Zero")
 
-    @api.constrains('offer_ids')
+    @api.constrains("offer_ids")
     def _check_offer_price(self):
         for rec in self:
             if rec.offer_ids and rec.offer_ids.price <= 0.0:
-                raise ValidationError('Offer Price should be Greater Than Zero')
-
+                raise ValidationError("Offer Price should be Greater Than Zero")
 
     def fix_selling_price(self):
         for rec in self:
-            rec.search([('selling_price' , '<=' , 0.0)]).write({'selling_price' : 1.0})
+            rec.search([("selling_price", "<=", 0.0)]).write({"selling_price": 1.0})
 
-
-    @api.depends('offer_ids.price')
-    def _compute_best_price (self):
-        for rec in self :
+    @api.depends("offer_ids.price")
+    def _compute_best_price(self):
+        for rec in self:
             if rec.offer_ids:
-                rec.best_price = max(rec.offer_ids.mapped('price'))
+                rec.best_price = max(rec.offer_ids.mapped("price"))
             else:
                 rec.best_price = 0.0
 
-    @api.depends('garden_area' , 'living_area')
+    @api.depends("garden_area", "living_area")
     def _compute_total_area(self):
         for rec in self:
-            if rec.garden_area and rec.living_area :
+            if rec.garden_area and rec.living_area:
                 rec.total_area = rec.garden_area + rec.living_area
             else:
                 rec.total_area = 0.0
 
-    @api.onchange('garden')
+    @api.onchange("garden")
     def _onchange_garden(self):
         if self.garden:
             self.garden_area = 10
-            self.garden_orientation = 'north'
-        else :
+            self.garden_orientation = "north"
+        else:
             self.garden_area = None
             self.garden_orientation = None
 
-
-
-    @api.depends('create_time')
+    @api.depends("create_time")
     def _compute_next_time(self):
         for rec in self:
             if rec.create_time:
@@ -158,50 +157,52 @@ class Property(models.Model):
                 rec.next_time = False
 
     # -- Difference Between Expected/Selling Price
-    @api.depends('expected_price', 'selling_price', 'owner_id.phone')
+    @api.depends("expected_price", "selling_price", "owner_id.phone")
     def _compute_diff(self):
-        '''
+        """
         will compute on this method
         after updating any of these fields
         becuse of the (depends Decorator)
         accepting all fields (view fields , model fields , relational fields)
-        '''
+        """
         for rec in self:
             print(rec)
-            print('inside _compute_diff Method')
+            print("inside _compute_diff Method")
             difference = rec.expected_price - rec.selling_price
             rec.diff = difference
 
-    @api.onchange('expected_price')
+    @api.onchange("expected_price")
     def _onchange_expected_price(self):
-        '''
+        """
         will print the text
         after updating this field
         becuse of the (onchange Decorator)
         but (it's just accepting view fields)
-        '''
+        """
         for rec in self:
             print(rec)
-            print('inside _onchange_expected_price Method')
+            print("inside _onchange_expected_price Method")
             if rec.expected_price < 0:
                 return {
-                    'warning': {'title': 'warning',
-                                'message': 'Negetive Number',
-                                'type': 'notification'}
+                    "warning": {
+                        "title": "warning",
+                        "message": "Negetive Number",
+                        "type": "notification",
+                    }
                 }
 
     # check this logic constraint on every record
-    @api.constrains('bedrooms')
+    @api.constrains("bedrooms")
     def _check_bedrooms_greater_zero(self):
-        '''
+        """
         Constraints on Logic Tier
         (on bedrooms to check if it's zero)
         you need for loop if it's recordset more than one row
         but here it's not but we used for loop
-        '''
+        """
         for rec in self:
             if rec.bedrooms == 0:
-                raise ValidationError('Please Add Valid number of bedrooms')
+                raise ValidationError("Please Add Valid number of bedrooms")
 
     # @api.constrains('expected_price')
     # def _check_expected_price(self):
@@ -210,67 +211,71 @@ class Property(models.Model):
     #             raise ValidationError('expected price should lower than 100 , '
     #                                   'and not be 0 or 5')
 
-
     # -- State Actions --
     def action_draft(self):
         for rec in self:
-            print('inside draft action')
-            rec.create_history_record(rec.state, 'draft')
-            rec.state = 'draft'
+            print("inside draft action")
+            rec.create_history_record(rec.state, "draft")
+            rec.state = "draft"
 
     def action_pending(self):
         for rec in self:
-            print('inside pending action')
+            print("inside pending action")
             # it's the same as (rec.state)
-            rec.create_history_record(rec.state, 'pending')
-            rec.write({
-                'state': 'pending'
-            })
+            rec.create_history_record(rec.state, "pending")
+            rec.write({"state": "pending"})
 
     def action_sold(self):
         for rec in self:
-            print('inside sold action')
-            rec.create_history_record(rec.state, 'sold')
-            rec.state = 'sold'
+            print("inside sold action")
+            rec.create_history_record(rec.state, "sold")
+            rec.state = "sold"
 
     def action_closed(self):
         for rec in self:
-            print(f'Setting record {rec.name} to closed')
-            rec.state = 'closed'  # أو rec.write({'state': 'closed'})
+            print(f"Setting record {rec.name} to closed")
+            rec.state = "closed"  # أو rec.write({'state': 'closed'})
 
     def check_expected_selling_date(self):
         # _logger.info('inside check_expected_selling_date')
         print(self)
-        '''
-        cron job when calling the Method 
+        """
+        cron job when calling the Method
         the self doesn't have any ids for the records (empty)
-        it's refering to the model it self (property) 
+        it's refering to the model it self (property)
         don't have to loop on records
-        '''
-        property_ids = self.search([])  # this line to return all the records with search Method
+        """
+        property_ids = self.search(
+            []
+        )  # this line to return all the records with search Method
         print(property_ids)
 
         for rec in property_ids:
-            if rec.expected_selling_date and rec.expected_selling_date < fields.date.today():
+            if (
+                rec.expected_selling_date
+                and rec.expected_selling_date < fields.date.today()
+            ):
                 rec.is_late = True
 
     def action(self):
         # Search Domain
-        print(self.env['property'].search(['|',
-                                           ('name', 'like', 'Property'),
-                                           ('postcode', 'in', ['21', '22', '23'])
-                                           ]))
+        print(
+            self.env["property"].search(
+                [
+                    "|",
+                    ("name", "like", "Property"),
+                    ("postcode", "in", ["21", "22", "23"]),
+                ]
+            )
+        )
 
     def Env_action(self):
 
         # create
-        print(self.env['owner'].create({
-            'name': 'ali Khalefa',
-            'phone': '010000230'
-        }))
+        print(self.env["owner"].create({"name": "ali Khalefa", "phone": "010000230"}))
 
         # search
-        print(self.env['owner'].search([]))
+        print(self.env["owner"].search([]))
 
         # User Details
         print(self.env)
@@ -296,14 +301,16 @@ class Property(models.Model):
         res = super().create(vals)
         # Logic
         # logic for the sequence
-        if res.ref == 'New':
-            res.ref = self.env['ir.sequence'].next_by_code('property_seq')
+        if res.ref == "New":
+            res.ref = self.env["ir.sequence"].next_by_code("property_seq")
 
         return res
 
     @api.model
     def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
-        res = super()._search(domain, offset=0, limit=None, order=None, access_rights_uid=None)
+        res = super()._search(
+            domain, offset=0, limit=None, order=None, access_rights_uid=None
+        )
         # Logic
         print("inside _search Method")
         return res
@@ -324,29 +331,37 @@ class Property(models.Model):
 
     def create_history_record(self, old_state, new_state, reason=""):
         for rec in self:
-            rec.env['property.history'].create({
-                'user_id': rec.env.uid,
-                'property_id': rec.id,
-                'old_state': old_state,
-                'new_state': new_state,
-                'reason': reason or "",
-                'line_ids': [(0, 0, {'description': line.description, 'area': line.area}) for line in rec.line_ids]
-                # this line is so important (magic or command tuple)
-            })
+            rec.env["property.history"].create(
+                {
+                    "user_id": rec.env.uid,
+                    "property_id": rec.id,
+                    "old_state": old_state,
+                    "new_state": new_state,
+                    "reason": reason or "",
+                    "line_ids": [
+                        (0, 0, {"description": line.description, "area": line.area})
+                        for line in rec.line_ids
+                    ],
+                    # this line is so important (magic or command tuple)
+                }
+            )
 
     # ---- Change State Wizard ----
     def action_open_change_state_wizard(self):
-        action = self.env['ir.actions.actions']._for_xml_id('app_one.change_state_wizard_action')
-        action['context'] = {'default_property_id': self.id}
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "app_one.change_state_wizard_action"
+        )
+        action["context"] = {"default_property_id": self.id}
         return action
 
     # ------ Action For Smart Button (open owner form) -------
     def action_open_related_owner(self):
-        action = self.env['ir.actions.actions']._for_xml_id(
-            'app_one.owner_action')  # to get the action id from the owner xml view
-        view_id = self.env.ref('app_one.owner_view_Form').id  # get the form view id
-        action['res_id'] = self.owner_id.id
-        action['views'] = [[view_id, 'form']]
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "app_one.owner_action"
+        )  # to get the action id from the owner xml view
+        view_id = self.env.ref("app_one.owner_view_Form").id  # get the form view id
+        action["res_id"] = self.owner_id.id
+        action["views"] = [[view_id, "form"]]
 
         return action
 
@@ -354,7 +369,9 @@ class Property(models.Model):
     def get_properties(self):
         payload = dict({})
         try:
-            response = requests.get('http://localhost:8069/v1/properties/filter', data=payload)
+            response = requests.get(
+                "http://localhost:8069/v1/properties/filter", data=payload
+            )
 
             if response.status_code == 200:
                 print("successfully!")
@@ -370,8 +387,8 @@ class Property(models.Model):
 
 
 class PropertyLine(models.Model):
-    _name = 'property.line'
+    _name = "property.line"
 
-    property_id = fields.Many2one('property')
+    property_id = fields.Many2one("property")
     area = fields.Float()
     description = fields.Char()
