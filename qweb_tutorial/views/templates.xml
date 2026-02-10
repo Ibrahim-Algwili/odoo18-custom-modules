@@ -1,0 +1,13 @@
+<odoo>
+    <template id="python_template" name="Python Template">
+        <t t-call="website.layout">
+            <div class="container">
+                <div class="row py-5">
+                    <div class="col">
+                        Qweb Template
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
