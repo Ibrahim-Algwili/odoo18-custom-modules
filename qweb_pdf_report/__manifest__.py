@@ -15,6 +15,7 @@
         "reports/payments_report.xml",
         "reports/stock_picking_report.xml",
         "reports/account_invoice_template.xml",
+        "reports/stock_scrap_template.xml",
         "reports/student_report.xml",
     ],
 }

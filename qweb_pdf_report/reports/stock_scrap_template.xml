@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="stock_scrap_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page"
+                         style="direction: rtl; font-size: 14px; font-family: 'Cairo', sans-serif; max-width: 1000px; margin: 0 auto; background: white;">
+                        <style>
+                            /* CSS styles */
+                            @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&amp;display=swap');
+                            th, td {
+                            border: 1px solid #ddd;
+                            padding: 5px 2px;
+                            padding-right: 60px;
+                            text-align: right;
+                            }
+                            th {
+                            background-color: #f2f2f2;
+                            }
+                            tr {
+                            background-color: #ffffff;
+                            }
+                        </style>
+
+                        <!-- Header -->
+                        <div class="header"
+                             style="font-family: 'Cairo'; border-bottom: 1px solid #dee2e6; margin-bottom:50px;">
+                            <div class="row" style="display: flex; align-items: center;">
+                                <div dir="rtl" class="col-4 text-right" style="color:#236CBE; font-size:18px;">
+                                    <strong>
+                                        <t t-esc="o.company_id.name"/>
+                                    </strong>
+                                </div>
+                                <div dir="rtl" class="col-4 text-center" style="font-size:18px;">
+                                    تقرير التوالف
+                                </div>
+                                <div dir="rtl" class="col-4" style="font-size:18px; text-align:left;">
+                                    <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%H:%M:%S %Y-%m-%d')"/>
+                                    <div style="color: #666; margin-top: 5px;">
+                                        صفحة
+                                        <span class="page"/>
+                                        /
+                                        <span class="topage"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table Of Content -->
+                        <table style="width:100%; border: 1px solid black;">
+                            <tr>
+                                <td style="width:70%; border:1px solid black;">
+                                    <span>
+                                        <strong>رقم المستند:</strong>
+                                    </span>
+                                    <span>
+                                        <t t-esc="o.name"/>
+                                    </span>
+                                </td>
+                                <td style="width:30%; border:1px solid black;">
+                                    <span>
+                                        <strong>التاريخ:</strong>
+                                    </span>
+                                    <span t-field="o.date_done"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" style="border:1px solid black;">
+                                    <span>
+                                        <strong>المخزن:</strong>
+                                    </span>
+                                    <span>
+                                        <t t-esc="o.location_id.name"/>
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" style="border:1px solid black;">
+                                    <span>
+                                        <strong>مخزن التالف:</strong>
+                                    </span>
+                                    <span>
+                                        <t t-esc="o.scrap_location_id.name"/>
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" style="border:1px solid black;">
+                                    <span>
+                                        <strong>المنتج:</strong>
+                                    </span>
+                                    <span>
+                                        <t t-esc="o.product_id.name"/>
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" style="border:1px solid black;">
+                                    <span>
+                                        <strong>الكمية:</strong>
+                                    </span>
+                                    <span>
+                                        <t t-esc="int(o.scrap_qty)"/>
+                                        <span t-field="o.product_uom_id.name"/>
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" style="border:1px solid black;">
+                                    <span>
+                                        <strong>سبب التلف:</strong>
+                                    </span>
+                                    <span>
+                                        <t t-esc="&quot; , &quot;.join(o.scrap_reason_tag_ids.mapped('name'))"/>
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+
+
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+
+                        <!-- Signatures Table -->
+                        <table style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:50%; text-align:center">
+                                        <b>إعداد</b>
+                                    </th>
+                                    <th style="width:50%; text-align:center">
+                                        <b>مدير المخزن</b>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr style="background-color: #ffffff;">
+                                    <td style="width: 50%; vertical-align: top;">
+                                        <div style="margin-bottom: 15px;">
+                                            <span>المُعد:</span>
+                                            <span>
+                                                <t t-esc="o.env.user.name"/>
+                                            </span>
+                                        </div>
+                                        <div style="margin-top: 25px;">
+                                            <span>التوقيع: --------------------------------------------------------- </span>
+                                        </div>
+                                    </td>
+
+                                    <td style="width: 50%; vertical-align: top;">
+                                        <div style="margin-bottom: 15px;">
+                                            <span>الإسم: --------------------------------------------------------- </span>
+                                        </div>
+                                        <div style="margin-top: 25px;">
+                                            <span>التوقيع:--------------------------------------------------------- </span>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="2" style="text-align:center; padding-top: 50px; padding-bottom: 20px;">
+                                        <div style="border-top: 1px solid #ddd; width: 30%; margin: 0 auto; padding-top: 10px; font-weight: bold;">
+                                            إعتماد
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
