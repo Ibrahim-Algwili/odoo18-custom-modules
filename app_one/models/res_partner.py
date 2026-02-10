@@ -1,6 +1,6 @@
 from email.policy import default
 
-from odoo import models, fields, api
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 

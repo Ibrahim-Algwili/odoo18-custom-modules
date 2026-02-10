@@ -1,12 +1,14 @@
-from . import model_d
-from . import property
-from . import owner
-from . import tag
-from . import sale_order
-from . import res_partner
-from . import client
-from . import building
-from . import property_history
-from . import account_move
-from . import property_type
-from . import property_offer
+from . import (
+    account_move,
+    building,
+    client,
+    model_d,
+    owner,
+    property,
+    property_history,
+    property_offer,
+    property_type,
+    res_partner,
+    sale_order,
+    tag,
+)

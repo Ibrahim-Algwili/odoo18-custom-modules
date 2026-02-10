@@ -1,17 +1,17 @@
 import datetime
-from email.policy import default
 import logging
 from datetime import date
+from email.policy import default
 
-from charset_normalizer.utils import is_latin
 import requests
-
+from charset_normalizer.utils import is_latin
 from odoo.tools import float_compare
 
 _logger = logging.getLogger(__name__)
-from odoo import models, fields, api
-from odoo.exceptions import ValidationError
 from datetime import timedelta
+
+from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class Property(models.Model):

@@ -1,0 +1,24 @@
+[MASTER]
+# إضافة موديول أودو للتحقق من القواعد الخاصة به
+load-plugins=pylint_odoo
+
+[MESSAGES CONTROL]
+# هنا يمكنك تعطيل التنبيهات المزعجة (مثل طول السطر أو نسيان Docstring)
+disable=
+    C0114, # missing-module-docstring
+    C0115, # missing-class-docstring
+    C0116, # missing-function-docstring
+    W0311, # bad-indentation (Black handles this)
+    line-too-long,
+    too-few-public-methods
+
+[REPORTS]
+# لجعل المخرجات بسيطة ومباشرة في الترمينال
+output-format=colorized
+
+[ODOO-LINT]
+# تحديد نسخة أودو لضمان فحص الدوال الملغاة (Deprecated)
+manifest_required_authors=Ibrahim
+manifest_required_keys=name,version,category,depends,data
+# يمكنك إضافة النسخة هنا
+valid_odoo_versions=18.0

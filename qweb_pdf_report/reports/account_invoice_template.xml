@@ -1,0 +1,262 @@
+<odoo>
+
+    <record id="account.account_invoices" model="ir.actions.report">
+        <field name="report_type">qweb-html</field>
+    </record>
+
+    <!-- Main inherited Invoide Template -->
+    <template id="invoice_report_inherit" inherit_id="account.report_invoice">
+        <xpath expr="//t[@t-call='web.html_container']" position="replace">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="lang" t-value="o.partner_id.lang"/>
+                <t t-if="o.move_type == 'out_invoice' and o.state == 'posted'">
+                    <t t-call="web.basic_layout">
+                        <t t-call="qweb_pdf_report.report_invoice_document"/>
+                    </t>
+                </t>
+                <t t-else="">
+                    <t t-call="web.html_container">
+                        <t t-call="account.report_invoice_document" t-lang="lang"/>
+                    </t>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+
+    <!-- new Configured Template -->
+    <template id="report_invoice_document">
+
+        <div class="page" style="direction: rtl;font-size: 14px; font-family: 'Cairo', sans-serif; max-width: 1000px;">
+            <style>
+                /* CSS STYLE */
+                @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&amp;display=swap');
+                th, td {
+                border: 1px solid #ddd;
+                padding: 5px 2px;
+                text-align: right;
+                }
+                th {
+                background-color: #f2f2f2;
+                }
+            </style>
+
+            <!-- Header -->
+            <div class="header" style="font-family: 'Cairo'; border-bottom: 1px solid #dee2e6; margin-bottom:50px;">
+                <div class="row" style="display: flex; align-items: center;">
+                    <div dir="rtl" class="col-4 text-right" style="color:#236CBE; font-size:18px;">
+                        <strong>
+                            <t t-esc="o.company_id.name"/>
+                        </strong>
+                    </div>
+                    <div dir="rtl" class="col-4 text-center" style="font-size:18px;">
+                        فاتورة: <t t-esc="o.name"/>
+                    </div>
+                    <div dir="rtl" class="col-4" style="font-size:18px; text-align:left;">
+                        <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%H:%M:%S %Y-%m-%d')" />
+                        <div style="color: #666; margin-top: 5px;">
+                            صفحة
+                            <span class="page" />
+                            /
+                            <span class="topage" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Information -->
+            <div class="row" style="border: 1px solid black; border-bottom:none; width:100%; margin-right:1px;">
+                <!-- First Row -->
+                <div class="row" style="margin-bottom:2px;">
+                    <div class="col-6">
+                        <span style="padding:5px;">
+                            <strong>إلى الأخوة:</strong>
+                        </span>
+                        <span>
+                            <t t-esc="o.partner_id.name"/>
+                        </span>
+                    </div>
+                    <div class="col-6" style="text-align:left;">
+                        <span style="padding:5px;">
+                            <strong>تاريخ التحرير:</strong>
+                        </span>
+                        <span>
+                            <t t-esc="o.invoice_date.strftime('%Y/%m/%d')"/>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Second Row -->
+                <div class="row" style="margin-bottom:2px;">
+                    <div class="col-6">
+                        <span style="padding:5px;">
+                            <strong>دفتر اليومية:</strong>
+                        </span>
+                        <span>
+                            <t t-esc="o.journal_id.name"/>
+                        </span>
+                    </div>
+                    <div class="col-6" style="text-align:left;">
+                        <span style="padding:5px;">
+                            <strong>تاريخ المطالبة:</strong>
+                        </span>
+                        <span>
+                            <t t-esc="o.invoice_date_due.strftime('%Y/%m/%d')"/>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Third Row -->
+                <div class="row" style="margin-bottom:3px;">
+                    <div class="col-6">
+                        <span style="padding:5px;">
+                            <strong>الشركة:</strong>
+                        </span>
+                        <span>
+                            <t t-esc="o.company_id.name"/>
+                        </span>
+                    </div>
+                    <div class="col-6" style="text-align:left;">
+                        <span style="padding:5px;">
+                            <strong>عنوان التوصيل:</strong>
+                        </span>
+                        <span>
+                            <t t-esc="o.partner_shipping_id.name"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <table class="table" style="width:100%; font-size:16px;">
+                <!-- Head -->
+                <thead>
+                    <tr style="background-color:#ebebeb; font-size:12px; font-wight:bold; height:14px;">
+                        <th style="text-align:center; width:4%;">م</th>
+                        <th style="text-align:center">رقم الصنف</th>
+                        <th style="text-align:center">إسم الصنف</th>
+                        <th style="text-align:center">الكمية</th>
+                        <th style="text-align:center">الوحدة</th>
+                        <th style="text-align:center">سعر الوحدة</th>
+                        <th style="text-align:center">القيمة</th>
+                    </tr>
+                </thead>
+
+                <!-- Body -->
+                <tbody>
+                    <!-- Variables -->
+                    <t t-set="counter" t-value="1"/>
+                    <t t-set="total_qty" t-value="0"/>
+                    <t t-set="total_amount" t-value="0"/>
+
+                    <t t-foreach="o.invoice_line_ids" t-as="line">
+                        <!-- Rows -->
+                        <tr t-if="line.product_id"
+                            style="background-color:#fefefe; font-size:12px; font-wight:bold; height:14px;">
+                            <td style="text-align:center">
+                                <t t-esc="counter"/>
+                            </td>
+
+                            <td style="text-align:center">
+                                <t t-esc="line.product_id.code"/>
+                            </td>
+
+                            <td style="text-align:center">
+                                <t t-esc="line.product_id.name"/>
+                            </td>
+
+                            <td style="text-align:center">
+                                <t t-esc="line.quantity"/>
+                            </td>
+
+                            <td style="text-align:center">
+                                <t t-esc="line.product_uom_id.name"/>
+                            </td>
+
+                            <td style="text-align:center">
+                                <t t-esc="int(line.price_unit)"
+                                   t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                            </td>
+
+                            <td style="text-align:center">
+                                <t t-esc="int(line.price_subtotal)"
+                                   t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                            </td>
+                        </tr>
+                        <!-- Calculate Totals -->
+                        <t t-set="counter" t-value="counter + 1"/>
+                        <t t-set="total_qty" t-value="total_qty + line.quantity"/>
+                        <t t-set="total_amount" t-value="total_amount + line.price_subtotal"/>
+
+                    </t>
+
+                    <!-- Totals -->
+                    <tr style="background-color:#fefefe; font-size:12px; font-wight:bold; height:14px;">
+
+                        <td colspan="3" style="border:none"></td>
+
+                        <td style="text-align:center; border: 1px solid #00b81c; font-weight:bold">
+                            <t t-esc="total_qty"/>
+                        </td>
+
+                        <td colspan="2" style="text-align:center; border: 1px solid #00b81c; font-weight:bold">
+                            <span>إجمالي</span>
+                        </td>
+
+                        <td colspan="2" style="text-align:center; border: 1px solid #00b81c; font-weight:bold">
+                            <t t-esc="total_amount"
+                               t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                        </td>
+                    </tr>
+
+                    <!-- Bottom Of The Table -->
+                    <tr>
+                        <td colspan="2" style="border-bottom: 2px solid black; text-align:center">
+                            <span>
+                                <b>المبلغ كتابة</b>
+                            </span>
+                        </td>
+
+                        <td colspan="5" style="border-bottom: 2px solid black; text-align:center">
+                            <span t-esc="o.get_amount_inwords()"/>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <br/>
+            <br/>
+
+            <!-- Signatures -->
+            <div class="row" style="border: 1px solid black; min-height:120px; display: flex; align-items: center;">
+
+                <div class="col-4 text-center">
+                    <div style="margin-bottom: 25px;">
+                        <b>توقيع المخزن</b>
+                    </div>
+                    <span>-----------------------</span>
+                </div>
+
+                <div class="col-4 text-center">
+                    <div style="margin-bottom: 25px;">
+                        <b>توقيع المندوب</b>
+                    </div>
+                    <span>-----------------------</span>
+                </div>
+
+                <div class="col-4 text-center">
+                    <div style="margin-bottom: 25px;">
+                        <b>توقيع الزبون</b>
+                    </div>
+                    <span>-----------------------</span>
+                </div>
+
+            </div>
+
+
+        </div>
+    </template>
+
+</odoo>

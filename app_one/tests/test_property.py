@@ -1,5 +1,4 @@
 from odoo import fields
-
 from odoo.tests.common import TransactionCase, _logger
 
 

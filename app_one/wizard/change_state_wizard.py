@@ -1,6 +1,6 @@
 from email.policy import default
 
-from odoo import models, fields
+from odoo import fields, models
 
 
 class ChangeStateWizard(models.TransientModel):

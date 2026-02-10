@@ -1,12 +1,12 @@
 import datetime
-from email.policy import default
 import logging
 from datetime import date
+from email.policy import default
 
 from charset_normalizer.utils import is_latin
 
 _logger = logging.getLogger(__name__)
-from odoo import models, fields, api
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 
