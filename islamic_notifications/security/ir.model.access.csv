@@ -1,2 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_islamic_notifications_islamic_notifications,islamic_notifications.islamic_notifications,model_islamic_notifications_islamic_notifications,base.group_user,1,1,1,1
+access_islamic_notifications,islamic_notifications.islamic_notifications,model_notifications,,1,1,1,1

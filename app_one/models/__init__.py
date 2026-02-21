@@ -1,7 +1,6 @@
-from . import (
+from . import (  # client,
     account_move,
     building,
-    # client,
     model_d,
     owner,
     property,

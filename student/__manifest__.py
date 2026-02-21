@@ -19,8 +19,6 @@ Long description of module's purpose
         "data/student_data.xml",
         "views/views.xml",
     ],
-
     "installable": True,
     "auto_install": False,
-
 }
