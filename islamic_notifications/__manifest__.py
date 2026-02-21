@@ -8,8 +8,8 @@
     "version": "0.1",
     "depends": ["base"],
     "data": [
-        'security/ir.model.access.csv',
-        'data/scheduled_actions.xml',
+        "security/ir.model.access.csv",
+        "data/scheduled_actions.xml",
         "views/notifications_views.xml",
     ],
 }
