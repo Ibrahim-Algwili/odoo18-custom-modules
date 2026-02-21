@@ -19,13 +19,27 @@ class student(models.Model):
     _description = "student.student"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
+
     active = fields.Boolean(default=True)
     name = fields.Char()
-    age = fields.Integer(default=None)
+    age = fields.Integer(default=0)
     dob = fields.Date()
     description = fields.Text()
     is_bool = fields.Boolean(default=True)
     image = fields.Image()
+    status = fields.Selection([
+        ('draft', 'Draft'),
+        ('in_progress', 'In Progress'),
+        ('done', 'Done'),
+    ], default='draft',
+       group_expand='_read_group_stage_ids')
+
+    def _read_group_stage_ids(self, stages, domain):
+        ''' we take the stages here with the keys so we return like this ['draft', 'in_progress', 'done'] '''
+        return [key for key, _ in self._fields['status'].selection]
+
+        # you can also do it like this if it's static status
+        # return ['draft', 'in_progress', 'done']
 
     def action_seach_fetch(self):
         # seach_fetch method

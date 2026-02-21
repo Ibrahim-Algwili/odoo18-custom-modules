@@ -36,7 +36,7 @@ class Property(models.Model):
     )  # readonly (1 by default with compute)
     bedrooms = fields.Integer(default=2)
     facades = fields.Integer()
-    garage = fields.Boolean(groups="app_one.property_manager_group")
+    garage = fields.Boolean()
     garden = fields.Boolean(required=1)
     garden_area = fields.Integer()
     living_area = fields.Integer()
@@ -306,14 +306,14 @@ class Property(models.Model):
 
         return res
 
-    @api.model
-    def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
-        res = super()._search(
-            domain, offset=0, limit=None, order=None, access_rights_uid=None
-        )
-        # Logic
-        print("inside _search Method")
-        return res
+    # @api.model
+    # def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
+    #     res = super()._search(
+    #         domain, offset=0, limit=None, order=None, access_rights_uid=None
+    #     )
+    #     # Logic
+    #     print("inside _search Method")
+    #     return res
 
     def write(self, vals):
         res = super().write(vals)

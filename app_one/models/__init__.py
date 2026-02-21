@@ -1,7 +1,7 @@
 from . import (
     account_move,
     building,
-    client,
+    # client,
     model_d,
     owner,
     property,

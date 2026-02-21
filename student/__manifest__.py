@@ -18,10 +18,9 @@ Long description of module's purpose
         # 'data/partner_data.xml',
         "data/student_data.xml",
         "views/views.xml",
-        "views/templates.xml",
     ],
-    # only loaded in demonstration mode
-    "demo": [
-        "demo/demo.xml",
-    ],
+
+    "installable": True,
+    "auto_install": False,
+
 }

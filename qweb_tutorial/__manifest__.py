@@ -9,7 +9,7 @@ Long description of module's purpose
     "website": "https://www.yourcompany.com",
     "category": "Uncategorized",
     "version": "0.1",
-    "depends": ["base","website"],
+    "depends": ["base", "website"],
     # always loaded
     "data": [
         # 'security/ir.model.access.csv',

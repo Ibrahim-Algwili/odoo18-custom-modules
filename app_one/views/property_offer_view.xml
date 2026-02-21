@@ -5,6 +5,7 @@
         <field name="model">property.offer</field>
         <field name="arch" type="xml">
             <list>
+                <field name="id" />
                 <field name="price" />
                 <field name="status" />
                 <field name="partner_id" />
@@ -20,6 +21,13 @@
         <field name="model">property.offer</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <field name="status" widget="statusbar" options="{'clickable': True}"/>
+
+                    <button name="archive_records" string="Archive Records" type="object" class="btn-primary"/>
+                    <button name="unarchive_records" string="UnArchive Records" type="object" class="btn-primary"/>
+                    <button name="action_accept" string="Accept" type="object" class="btn-success"/>
+                </header>
                 <sheet>
                     <group>
                         <field name="price" />
@@ -46,6 +54,5 @@
         parent="configuration_menu"
         action="property_offer_action_window"
     />
-<!--        groups="app_one.property_managers_group"-->
 
 </odoo>

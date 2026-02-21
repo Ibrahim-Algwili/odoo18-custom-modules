@@ -10,8 +10,46 @@
                     <field name="age"/>
                     <field name="dob"/>
                     <field name="is_bool"/>
+                    <field name="status"/>
                     <field name="description"/>
                 </list>
+            </field>
+        </record>
+
+        <!-- Kanban View -->
+        <record id="student_kanban_view" model="ir.ui.view">
+            <field name="name">Student Kanban View</field>
+            <field name="model">student.student</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="status">
+                    <field name="name"/>
+                    <field name="age"/>
+                    <field name="image"/>
+                    <field name="dob"/>
+                    <field name="description"/>
+                    <field name="status"/>
+                    <templates>
+                        <t t-name="card">
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <aside class="o_kanban_aside_full">
+                                        <div class="o_kanban_image_fill position_relative w-100">
+                                            <field name="image" widget="image" class="h-100" option="{'img_class':'object_fit_cover'}"/>
+                                        </div>
+                                    </aside>
+                                </div>
+
+                                <div class="col-4">
+                                    <field class="fw-bolder" name="name"/>
+                                </div>
+                                <div class="col-4">
+                                    <field class="fw-bolder" name="age"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
             </field>
         </record>
 
@@ -24,17 +62,18 @@
                 <form edit="1" create="1" delete="1">
                     <sheet>
                         <header>
+                            <field name="status" widget="statusbar" options="{'clickable':True}"/>
                             <field name="image" widget="image" class="oe_avatar"/>
 
-                            <button name="popup" type="object" string="Bus Notification" />
-                            <button name="action_seach_fetch" type="object" string="action" class="btn-primary" />
-                            <button name="action_log" type="object" string="Log" class="btn-secondary" />
-                            <button name="print_report" type="object" string="Print" class="btn-primary" />
+                            <button name="popup" type="object" string="Bus Notification"/>
+                            <button name="action_seach_fetch" type="object" string="action" class="btn-primary"/>
+                            <button name="action_log" type="object" string="Log" class="btn-secondary"/>
+                            <button name="print_report" type="object" string="Print" class="btn-primary"/>
                         </header>
                         <group>
                             <group>
                                 <field name="name"/>
-                                <field name="age" />
+                                <field name="age"/>
                                 <field name="dob" readonly="name == 'ali' or age &lt; 20" invisible="name == 'ahmed'"/>
                             </group>
                             <group>
@@ -51,28 +90,28 @@
                         <field name="activity_ids"/>
                         <field name="message_ids"/>
                     </chatter>
-            </form>
-        </field>
-    </record>
+                </form>
+            </field>
+        </record>
 
 
-    <!-- actions opening views on models -->
-    <record model="ir.actions.act_window" id="student.action_window">
-        <field name="name">student window</field>
-        <field name="res_model">student.student</field>
-        <field name="view_mode">list,form</field>
-    </record>
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="student.action_window">
+            <field name="name">student window</field>
+            <field name="res_model">student.student</field>
+            <field name="view_mode">list,form,kanban</field>
+        </record>
 
-    <!-- Top menu item -->
-    <menuitem name="student" id="student.menu_root"/>
+        <!-- Top menu item -->
+        <menuitem name="student" id="student.menu_root"/>
 
-    <!-- menu categories -->
-    <menuitem name="Student" id="student.menu" parent="student.menu_root"/>
+        <!-- menu categories -->
+        <menuitem name="Student" id="student.menu" parent="student.menu_root"/>
 
-    <!-- actions -->
-    <menuitem name="List" id="student.menu_1_list" parent="student.menu"
-              action="student.action_window"/>
+        <!-- actions -->
+        <menuitem name="List" id="student.menu_1_list" parent="student.menu"
+                  action="student.action_window"/>
 
 
-</data>
-        </odoo>
+    </data>
+</odoo>
