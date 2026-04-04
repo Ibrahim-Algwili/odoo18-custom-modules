@@ -20,3 +20,4 @@ class SaleOrder(models.Model):
         res = super().action_confirm()
         print("inside action confirm")
         return res
+

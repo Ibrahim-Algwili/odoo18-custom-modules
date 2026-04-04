@@ -3,7 +3,7 @@
     "author": "Ibrahim Ali",
     "license": "LGPL-3",
     "version": "18.0.0.1.0",
-    "depends": ["base", "sale", "account", "mail", "contacts"],
+    "depends": ['base', 'sale', 'account', 'mail', 'contacts', 'web'],
     "data": [
         "security/category.xml",
         "security/security.xml",
@@ -21,12 +21,9 @@
         "views/account_move_view.xml",
         "views/property_offer_view.xml",
         "wizard/change_state_wizard.xml",
-        "reports/property_report.xml",
+        "wizard/xlsx_property_wizard.xml",
+        "reports/property_reports.xml",
     ],
-    "assets": {
-        "web.assets_backend": ["app_one/static/src/css/property.css"],
-        "web.report_assets_common": ["app_one/static/src/css/font.css"],
-    },
     "application": True,
     "installable": True,
 }

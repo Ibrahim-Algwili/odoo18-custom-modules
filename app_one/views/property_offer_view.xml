@@ -27,6 +27,12 @@
                     <button name="archive_records" string="Archive Records" type="object" class="btn-primary"/>
                     <button name="unarchive_records" string="UnArchive Records" type="object" class="btn-primary"/>
                     <button name="action_accept" string="Accept" type="object" class="btn-success"/>
+                    <button name="cr_sql_test" string="SQL" type="object" class="btn-success"/>
+                    <button name="search_button" string="Search" type="object" class="btn-success"/>
+                    <button name="filter_button" string="Filter" type="object" class="btn-primary"/>
+                    <button name="grouped_button" string="Grouped" type="object" class="btn-primary"/>
+                    <button name="redirect_warning_message" string="Redirect" type="object" class="btn-primary"/>
+                    <button name="custome_metod_rpc_call" string="RPC" type="object" class="btn-primary"/>
                 </header>
                 <sheet>
                     <group>

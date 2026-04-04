@@ -1,0 +1,33 @@
+<odoo>
+
+    <record id="emp_report_wizard_view_form" model="ir.ui.view">
+        <field name="name">emp.report.wizard.view.form</field>
+        <field name="model">emp.report.excel.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Employee">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="employee_id" required="1" options="{'no_create': True, 'no_open': True}"/>
+                        </h1>
+                    </div>
+                    <footer>
+                        <button name="print_excel_report" string="Export" type="object" class="oe_highlight" />
+                        <button string="Cancel" special="cancel" class="oe_link" />
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="emp_report_wizard_action" model="ir.actions.act_window">
+        <field name="name">Emp Report Wizard</field>
+        <field name="res_model">emp.report.excel.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="employee_report_excel.emp_report_wizard_view_form" />
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="employee_report_xlsx_menu" name="Emp Report Wizard" parent="hr.hr_menu_hr_reports" action="emp_report_wizard_action" sequence="5"/>
+
+</odoo>

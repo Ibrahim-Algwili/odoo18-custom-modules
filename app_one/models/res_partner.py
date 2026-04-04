@@ -10,6 +10,11 @@ class ResPartner(models.Model):
     property_id = fields.Many2one("property")
     price = fields.Float(related="property_id.selling_price")
 
+    phone = fields.Char(default="0945466952", required=True)
+
+
+
+
     # --- Another Way ----
     # price = fields.Float(compute='_compute_price' , store=1)
     #

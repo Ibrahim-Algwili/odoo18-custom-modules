@@ -17,12 +17,15 @@ list_of_messages = [
 class Notifications(models.Model):
     _name = "notifications"
 
-    @api.model
-    def _cron_send_notification(self):
-        users = self.env["res.users"].search([("active", "=", True)])
 
-        chosen_message = random.choice(list_of_messages)
 
+    def _getting_active_users(self):
+        return self.env["res.users"].search([("active", "=", True)])
+
+    def _getting_random_message(self):
+        return random.choice(list_of_messages)
+
+    def _generate_notification_message(self, users):
         for user in users:
             self.env["bus.bus"]._sendone(
                 user.partner_id,
@@ -30,7 +33,12 @@ class Notifications(models.Model):
                 {
                     "type": "success",
                     "title": "تذكير",
-                    "message": chosen_message,
+                    "message": self._getting_random_message(),
                     "sticky": False,
                 },
             )
+
+    @api.model
+    def _cron_send_notification(self):
+        users = self._getting_active_users()
+        self._generate_notification_message(users)

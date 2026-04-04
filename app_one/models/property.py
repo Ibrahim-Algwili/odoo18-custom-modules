@@ -291,7 +291,11 @@ class Property(models.Model):
 
         print(self.env.context)
 
-        print(self.env.cr)  # Cursor
+        print(self.env.cr)
+
+        print(self.env['ir.module.category'].search([]).has_access("read"))# Cursor
+        print(self.env['ir.module.category'].search([]).check_access("read"))# Cursor
+        print(self.env['ir.module.category'].search([])._check_company())# Cursor
 
     # CRUD Operations (Create , Read , Update , Delete)
 
@@ -384,6 +388,20 @@ class Property(models.Model):
         print(response)  # response 200 if success
         print(response.status_code)  # response 200 if success
         print(response.content)  # data in json
+
+
+
+        # ---------------------- XLSX Report -------------------------------
+        def print_xlsx_report(self):
+            '''
+            :return: URL Action for the EndPoint We Created
+            '''
+            return {
+                'type': 'ir.actions.act_url',
+                'url': f'/property/excel/report/{self.env.context.get("active_ids")}',
+                # To get the Active or Selected Records
+                'target': 'new',
+            }
 
 
 class PropertyLine(models.Model):

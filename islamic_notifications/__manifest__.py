@@ -10,6 +10,5 @@
     "data": [
         "security/ir.model.access.csv",
         "data/scheduled_actions.xml",
-        "views/notifications_views.xml",
     ],
 }

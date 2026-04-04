@@ -16,3 +16,6 @@ class ChangeStateWizard(models.TransientModel):
         if self.property_id.state == "closed":
             self.property_id.state = self.state
             self.property_id.create_history_record("closed", self.state, self.reason)
+
+    def xlsx_report(self):
+        pass

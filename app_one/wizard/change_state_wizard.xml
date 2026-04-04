@@ -13,6 +13,7 @@
                 </group>
                 <footer>
                     <button string="Confirm" type="object" name="action_confirm" class="btn-primary" />
+                    <button string="print" type="object" name="xlsx_report" class="btn-primary" data-hotkey="q" />
                     <button string="Cancel" special="cancel" class="btn-secondary" />
                 </footer>
             </form>

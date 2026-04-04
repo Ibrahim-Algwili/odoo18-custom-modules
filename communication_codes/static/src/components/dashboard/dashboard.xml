@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="communication_codes.Dashboard">
+        <div class="o_comm_dashboard">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <div class="header-content">
+                    <div class="header-right">
+                        <h1 class="dashboard-title">إدارة شفرات الاتصالات</h1>
+                        <p class="dashboard-subtitle">إدارة وتتبع شفرات الاتصال للموظفين</p>
+                    </div>
+                    <div class="header-left">
+                        <div class="header-badge">
+                            <i class="fa fa-sync-alt"></i>
+                            <span>آخر تحديث: <t t-esc="state.lastUpdate"/></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card stat-card-primary" t-on-click="() => this.openView()">
+                    <div class="stat-icon">
+                        <i class="fa fa-mobile-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value"><t t-esc="state.stats.total_count or 0"/></div>
+                        <div class="stat-label">إجمالي الأرقام</div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-card-success" t-on-click="() => this.openView('in_stock')">
+                    <div class="stat-icon">
+                        <i class="fa fa-box"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value"><t t-esc="state.stats.status_counts?.in_stock or 0"/></div>
+                        <div class="stat-label">في المخزن</div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-card-info" t-on-click="() => this.openView('delivered')">
+                    <div class="stat-icon">
+                        <i class="fa fa-paper-plane"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value"><t t-esc="state.stats.status_counts?.delivered or 0"/></div>
+                        <div class="stat-label">تم التسليم</div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-card-warning" t-on-click="() => this.openView('suspended')">
+                    <div class="stat-icon">
+                        <i class="fa fa-pause-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value"><t t-esc="state.stats.status_counts?.suspended or 0"/></div>
+                        <div class="stat-label">موقوفة</div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-card-danger" t-on-click="() => this.openView('cancelled')">
+                    <div class="stat-icon">
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value"><t t-esc="state.stats.status_counts?.cancelled or 0"/></div>
+                        <div class="stat-label">ملغاة</div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-card-neutral">
+                    <div class="stat-icon">
+                        <i class="fa fa-building"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value"><t t-esc="state.stats.company_count or 0"/></div>
+                        <div class="stat-label">الشركات</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="chart-card chart-card-large">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fa fa-chart-bar"></i>
+                            توزيع الحالات
+                        </h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas t-ref="statusChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card chart-card-small">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fa fa-chart-pie"></i>
+                            أنظمة الشفرات
+                        </h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas t-ref="systemChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card chart-card-small">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fa fa-coins"></i>
+                            إجمالي الرصيد
+                        </h3>
+                    </div>
+                    <div class="balance-display">
+                        <div class="balance-value">
+                            <t t-esc="Math.round(state.stats.total_balance or 0).toLocaleString()"/>
+                        </div>
+                        <div class="balance-label">الرصيد الشهري</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tables Section -->
+            <div class="tables-grid">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">
+                            <i class="fa fa-clock"></i>
+                            أحدث الأرقام
+                        </h3>
+                        <button class="btn-view-all" t-on-click="() => this.openView()">
+                            عرض الكل <i class="fa fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div class="table-body">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>رقم الشفرة</th>
+                                    <th>الموظف</th>
+                                    <th>الحالة</th>
+                                    <th>الشركة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="state.stats.recent_codes or []" t-as="code" t-key="code.id">
+                                    <tr>
+                                        <td>
+                                            <span class="code-number"><t t-esc="code.code_number"/></span>
+                                        </td>
+                                        <td>
+                                            <span class="employee-name"><t t-esc="code.employee_name"/></span>
+                                        </td>
+                                        <td>
+                                            <span t-attf-class="status-badge status-{{code.status_color}}">
+                                                <t t-esc="code.status_name"/>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="company-name"><t t-esc="code.company_name or '-'"/></span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">
+                            <i class="fa fa-building"></i>
+                            إحصائيات الشركات
+                        </h3>
+                    </div>
+                    <div class="table-body">
+                        <div class="company-stats">
+                            <t t-foreach="state.stats.company_stats or []" t-as="c_stat" t-key="c_stat.name">
+                                <div class="company-stat-item">
+                                    <div class="company-stat-header">
+                                        <span class="company-stat-name"><t t-esc="c_stat.name"/></span>
+                                        <span class="company-stat-count"><t t-esc="c_stat.count"/> رقم</span>
+                                    </div>
+                                    <div class="progress-bar-mini">
+                                        <div class="progress-fill" t-attf-style="'width: ' + c_stat.percent + '%'"></div>
+                                    </div>
+                                    <div class="company-stat-percent"><t t-esc="Math.round(c_stat.percent)"/>%</div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
