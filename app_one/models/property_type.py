@@ -9,7 +9,6 @@ class PropertyType(models.Model):
 
     _sql_constraints = [("Unique_Name", "unique(name)", "This Name is Exist")]
 
-
     def sql_crud_query(self, qry):
         self.env.cr.execute(qry)
         self.env.cr.commit()

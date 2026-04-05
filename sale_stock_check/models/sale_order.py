@@ -1,4 +1,4 @@
-from odoo import models, _
+from odoo import _, models
 from odoo.exceptions import UserError
 
 
@@ -11,7 +11,8 @@ class SaleOrder(models.Model):
     - _format_insufficient_message: turns the problem set into a readable message
     - action_confirm: orchestrates checks before calling super()
     """
-    _inherit = 'sale.order'
+
+    _inherit = "sale.order"
 
     def _line_needs_check(self, line):
         """Return (product, needed_qty, available_qty) when stock is insufficient for the line.
@@ -23,7 +24,7 @@ class SaleOrder(models.Model):
         if not product or needed <= 0:
             return None
         # Ignore services
-        if product.type == 'service':
+        if product.type == "service":
             return None
         available = product.virtual_available
         if available < needed:
@@ -46,7 +47,9 @@ class SaleOrder(models.Model):
         """Format a readable message for the provided insufficient list."""
         rows = []
         for product, needed, available in insufficient:
-            rows.append(f"{product.display_name}: ordered={needed}, available={available}")
+            rows.append(
+                f"{product.display_name}: ordered={needed}, available={available}"
+            )
         return "\n".join(rows)
 
     def action_confirm(self):
@@ -58,8 +61,8 @@ class SaleOrder(models.Model):
             insufficient = order._insufficient_lines()
             if insufficient:
                 msg = order._format_insufficient_message(insufficient)
-                raise UserError(_("Not enough stock for the following products:\n%s") % msg)
+                raise UserError(
+                    _("Not enough stock for the following products:\n%s") % msg
+                )
         # Call parent implementation
         return super(SaleOrder, self).action_confirm()
-
-

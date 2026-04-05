@@ -21,6 +21,4 @@ Long description of module's purpose
     ],
     "installable": True,
     "auto_install": False,
-
-
 }

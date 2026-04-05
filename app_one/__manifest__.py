@@ -3,7 +3,7 @@
     "author": "Ibrahim Ali",
     "license": "LGPL-3",
     "version": "18.0.0.1.0",
-    "depends": ['base', 'sale', 'account', 'mail', 'contacts', 'web'],
+    "depends": ["base", "sale", "account", "mail", "contacts", "web"],
     "data": [
         "security/category.xml",
         "security/security.xml",

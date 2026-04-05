@@ -1,15 +1,16 @@
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 
 
 class PdfOrientation(models.TransientModel):
-    _name = 'pdforientation'
+    _name = "pdforientation"
     _description = "Select the orientation of the pdf"
 
     def orientation_choices(self):
-        return [('landscape', _('Landscape')), ('portrait', _('Portrait'))]
+        return [("landscape", _("Landscape")), ("portrait", _("Portrait"))]
 
     def get_default_caution_html(self):
-        return _("""
+        return _(
+            """
         <div>
             <span style='color: red'>Be careful</span>, it will execute the query <span style='color: red; text-decoration: underline'>one more time</span> on your database in order to get-back the datas used to print the result.
             <br/>
@@ -19,11 +20,14 @@ class PdfOrientation(models.TransientModel):
             <br/>
             So when you want to print the result, use preferably 'SELECT' statement to be sure to not execute an unwanted query twice.
         </div>
-        """)
+        """
+        )
 
-    orientation = fields.Selection(string="PDF orientation", selection=orientation_choices, default='landscape')
+    orientation = fields.Selection(
+        string="PDF orientation", selection=orientation_choices, default="landscape"
+    )
     name = fields.Text(string="Query")
-    query_id = fields.Many2one('querydeluxe', string="Query")
+    query_id = fields.Many2one("querydeluxe", string="Query")
     caution_html = fields.Html(string="CAUTION", default=get_default_caution_html)
     understand = fields.Boolean(string="I understand")
 
@@ -31,9 +35,9 @@ class PdfOrientation(models.TransientModel):
         if self:
             self = self.sudo()
             first = self[0]
-            action_print_pdf = self.env.ref('query_deluxe.action_print_pdf')
-            if first.orientation == 'landscape':
+            action_print_pdf = self.env.ref("query_deluxe.action_print_pdf")
+            if first.orientation == "landscape":
                 action_print_pdf.paperformat_id.orientation = "Landscape"
-            elif first.orientation == 'portrait':
+            elif first.orientation == "portrait":
                 action_print_pdf.paperformat_id.orientation = "Portrait"
             return action_print_pdf.report_action(first.query_id)

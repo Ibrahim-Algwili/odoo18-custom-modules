@@ -1,7 +1,8 @@
-from odoo import fields, models, api, _
-import xlsxwriter
 import base64
 from io import BytesIO
+
+import xlsxwriter
+from odoo import _, api, fields, models
 
 
 class XlsxPropertyWizard(models.TransientModel):
@@ -21,22 +22,22 @@ class XlsxPropertyWizard(models.TransientModel):
     # --- 2. Formatting Logic ---
     def _get_header_format(self, workbook):
         """Defines and returns the format for the header row"""
-        return workbook.add_format({
-            "bold": True,
-            "bg_color": "#366092",  # Professional Blue
-            "font_color": "white",
-            "border": 1,
-            "align": "center",
-            "valign": "vcenter"
-        })
+        return workbook.add_format(
+            {
+                "bold": True,
+                "bg_color": "#366092",  # Professional Blue
+                "font_color": "white",
+                "border": 1,
+                "align": "center",
+                "valign": "vcenter",
+            }
+        )
 
     def _get_data_format(self, workbook):
         """Defines and returns the standard format for data cells"""
-        return workbook.add_format({
-            "border": 1,
-            "align": "center",
-            "valign": "vcenter"
-        })
+        return workbook.add_format(
+            {"border": 1, "align": "center", "valign": "vcenter"}
+        )
 
     # --- 3. Writing Logic ---
     def _prepare_worksheet(self, worksheet):
@@ -85,10 +86,7 @@ class XlsxPropertyWizard(models.TransientModel):
         name = "Properties_Report.xlsx"
 
         # Save results back to the Wizard record
-        self.write({
-            "file": file_data,
-            "file_name": name
-        })
+        self.write({"file": file_data, "file_name": name})
         output.close()
 
         # Return the download action URL

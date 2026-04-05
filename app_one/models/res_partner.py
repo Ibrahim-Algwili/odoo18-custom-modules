@@ -12,9 +12,6 @@ class ResPartner(models.Model):
 
     phone = fields.Char(default="0945466952", required=True)
 
-
-
-
     # --- Another Way ----
     # price = fields.Float(compute='_compute_price' , store=1)
     #

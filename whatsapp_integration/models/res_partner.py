@@ -1,10 +1,8 @@
-from odoo import models, fields, api
-
+from odoo import api, fields, models
 
 
 class ResPartner(models.Model):
-    _inherit = 'res.partner'
-
+    _inherit = "res.partner"
 
     def action_open_whatsapp_wizard(self):
         return {
@@ -15,6 +13,6 @@ class ResPartner(models.Model):
             "target": "new",
             "context": {
                 "default_mobile_number": self.mobile or self.phone,
-                "default_message": f"Hello {self.name}, "
-            }
+                "default_message": f"Hello {self.name}, ",
+            },
         }

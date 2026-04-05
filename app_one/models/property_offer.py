@@ -1,7 +1,8 @@
 import datetime
 from email.policy import default
-from odoo.exceptions import RedirectWarning
+
 from odoo import api, fields, models
+from odoo.exceptions import RedirectWarning
 from odoo.tools import SQL
 
 
@@ -70,9 +71,9 @@ class PropertyOffer(models.Model):
 
     # ============ env ===============
     def example(self):
-        Partner = self.env['res.partner']
+        Partner = self.env["res.partner"]
 
-        partners = Partner.search([('customer', '=', True)])
+        partners = Partner.search([("customer", "=", True)])
 
         if self.env.is_admin():
             partners = partners.sudo()
@@ -81,10 +82,9 @@ class PropertyOffer(models.Model):
 
         company = self.env.company
 
-        group = self.env.ref('base.group_system')
+        group = self.env.ref("base.group_system")
 
         return partners
-
 
     # ============= Sql =============
     def cr_sql_test(self):
@@ -92,17 +92,15 @@ class PropertyOffer(models.Model):
         sql = SQL("UPDATE property_offer SET price = %s", 50.0)
         self.env.cr.execute(sql)
 
-
     # ============ ORM ==============
     def write(self, vals):
         res = super().write(vals)
-        print("Vals : " , vals)
-        print("Res" , res)
+        print("Vals : ", vals)
+        print("Res", res)
         if vals.get("price"):
             print("Price Updated Successfully!!")
 
         return res
-
 
     def read(self, fields=None, load=None):
         res = super().read(fields=fields, load=load)
@@ -116,8 +114,8 @@ class PropertyOffer(models.Model):
         records = self.search([])
         print("Search : ", records)
 
-        records = self.browse([2,3])
-        data = records.read(['price', 'status'])
+        records = self.browse([2, 3])
+        data = records.read(["price", "status"])
         print("Read Data: ", data)
 
     def filter_button(self):
@@ -139,18 +137,18 @@ class PropertyOffer(models.Model):
         print("Mapped : ", records)
 
     def grouped_button(self):
-        '''
+        """
         :return: Dictionary of Record Sets
-        '''
-        orders = self.env['sale.order'].search([])
+        """
+        orders = self.env["sale.order"].search([])
 
-        records_grouped = orders.grouped('partner_id')
+        records_grouped = orders.grouped("partner_id")
         print("Grouped : ", records_grouped)
 
-        records_grouped = orders.grouped(lambda o: o.amount_total > 100) # Grouped :  {True: sale.order(24, 23, 22, 21, 16, 14, 13, 12, 18)}
+        records_grouped = orders.grouped(
+            lambda o: o.amount_total > 100
+        )  # Grouped :  {True: sale.order(24, 23, 22, 21, 16, 14, 13, 12, 18)}
         print("Grouped : ", records_grouped)
-
-
 
     # =========== Warning & Error Messages ============
     def redirect_warning_message(self):
@@ -159,24 +157,20 @@ class PropertyOffer(models.Model):
         if user.company_id:
             action = self.env.ref("base.action_res_company_form").id
             raise RedirectWarning(
-                    "This User Has No Company",
-                    action,
-                    "Go To Companies List"
+                "This User Has No Company", action, "Go To Companies List"
             )
-
 
     # ========================== XML-RPC CALL =========================
 
     def custome_metod_rpc_call(self):
         data = []
 
-        property_details = self.env['property'].search_read([])
+        property_details = self.env["property"].search_read([])
         offer_details = self.search_read([])
 
-        data.append({
-            "Property Details": property_details,
-            "Offer Details": offer_details
-        })
+        data.append(
+            {"Property Details": property_details, "Offer Details": offer_details}
+        )
         print("Data : --> ", data)
 
         # self.sql_select_query("SELECT * FROM property_offer")
@@ -188,10 +182,3 @@ class PropertyOffer(models.Model):
         data = self.env.cr.fetchall()
         print("Data From SQL : ", data)
         return data
-
-
-
-
-
-
-

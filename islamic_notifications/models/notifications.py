@@ -17,8 +17,6 @@ list_of_messages = [
 class Notifications(models.Model):
     _name = "notifications"
 
-
-
     def _getting_active_users(self):
         return self.env["res.users"].search([("active", "=", True)])
 

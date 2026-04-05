@@ -5,20 +5,12 @@
 import json
 import logging
 
-from werkzeug.urls import url_decode
-
-from odoo.http import (
-    content_disposition,
-    request,
-    route,
-)
-from odoo.http import (
-    serialize_exception as _serialize_exception,
-)
+from odoo.addons.web.controllers.report import ReportController
+from odoo.http import content_disposition, request, route
+from odoo.http import serialize_exception as _serialize_exception
 from odoo.tools import html_escape
 from odoo.tools.safe_eval import safe_eval, time
-
-from odoo.addons.web.controllers.report import ReportController
+from werkzeug.urls import url_decode
 
 _logger = logging.getLogger(__name__)
 
