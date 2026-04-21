@@ -1,0 +1,12 @@
+<odoo>
+
+    <template id="report_invoice_document" inherit_id="account.report_invoice_document">
+
+        <!-- Adding Amount in Words to the Invoice Report -->
+        <xpath expr="//div[@id='total']" position="inside">
+           <strong> In Words : </strong> <span t-field="o.amount_to_text" />
+        </xpath>
+
+    </template>
+
+</odoo>

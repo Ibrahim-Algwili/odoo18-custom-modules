@@ -1,4 +1,5 @@
 import random
+
 from odoo import _, api, fields, models
 
 list_of_messages = [
@@ -13,6 +14,7 @@ list_of_messages = [
     "يا حي يا قيوم برحمتك أستغيث، أصلح لي شأني كله ولا تكلني إلى نفسي طرفة عين",
     "رضيت بالله رباً وبالإسلام ديناً وبمحمد ﷺ نبياً",
 ]
+
 
 class Notifications(models.Model):
     _name = "notifications"

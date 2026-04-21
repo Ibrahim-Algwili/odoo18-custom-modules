@@ -1,0 +1,12 @@
+<odoo>
+
+    <template id="report_saleorder_document" inherit_id="sale.report_saleorder_document">
+
+        <!-- Adding Amount in Words to the Sale Report -->
+        <xpath expr="//div[@name='so_total_summary']" position="after">
+            In Wrods : <span t-field="doc.amount_to_text" />
+        </xpath>
+
+    </template>
+
+</odoo>
